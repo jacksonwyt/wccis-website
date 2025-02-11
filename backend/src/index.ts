@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
+import { configureSecurityMiddleware, sanitizeInputs } from './middleware/security';
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +23,10 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.use(sanitizeInputs);
+
+// Configure security middleware
+configureSecurityMiddleware(app);
 
 // Routes
 app.use('/api/health', healthRoutes);
@@ -29,8 +34,8 @@ app.use('/api/insure', insureRoutes);
 app.use('/api/certificate', certificateRoutes);
 app.use('/api/contact', contactRoutes);
 
-// Error handling
-app.use(errorHandler);
+// Error handling middleware should be after routes
+app.use(errorHandler as express.ErrorRequestHandler);
 
 // Handle unhandled routes
 app.use('*', (req, res) => {
