@@ -26,6 +26,7 @@ const WorkersCompensationPage = () => {
             </p>
             <Button 
               onClick={() => router.push(ROUTES.INSURE)}
+              variant="white"
               className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
             >
               Get Your Quote
@@ -183,28 +184,29 @@ const WorkersCompensationPage = () => {
 
       {/* CTA Section */}
       <section className="bg-blue-900 text-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Protect Your Workers Today</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Get a customized workers' compensation quote tailored to your business size and needs.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button 
-              onClick={() => router.push(ROUTES.INSURE)}
-              className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
-            >
-              Get Your Quote
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => router.push(ROUTES.CONTACT)}
-              className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg"
-            >
-              Speak to an Agent
-            </Button>
-          </div>
-        </div>
-      </section>
+  <div className="container mx-auto px-4 text-center">
+    <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
+    <p className="text-xl mb-8 max-w-2xl mx-auto">
+      Get a customized quote tailored to your business needs.
+    </p>
+    <div className="flex justify-center gap-4">
+      <Button 
+        onClick={() => router.push(ROUTES.INSURANCE.QUOTES.WORKERS_COMP)}
+        variant="white"
+        className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
+      >
+        Get Your Free Quote
+      </Button>
+      <Button 
+        variant="outline"
+        onClick={() => router.push(ROUTES.CONTACT)}
+        className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg"
+      >
+        Speak to an Agent
+      </Button>
+    </div>
+  </div>
+</section>
     </Layout>
   );
 };

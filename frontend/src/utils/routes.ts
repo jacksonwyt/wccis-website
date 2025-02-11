@@ -8,6 +8,11 @@ export const ROUTES = {
       GENERAL_LIABILITY: '/insurance/general-liability',
       WORKERS_COMP: '/insurance/workers-compensation',
       COMMERCIAL_AUTO: '/insurance/commercial-auto',
+      QUOTES: {
+        GENERAL_LIABILITY: '/insurance/general-liability-quote',
+        WORKERS_COMP: '/insurance/workers-comp-quote',
+        COMMERCIAL_AUTO: '/insurance/commercial-auto-quote',
+      }
     },
   } as const;
   
@@ -22,7 +27,6 @@ export const ROUTES = {
         { label: 'Commercial Auto', path: ROUTES.INSURANCE.COMMERCIAL_AUTO },
       ]
     },
-    { label: 'Get Quote', path: ROUTES.INSURE },
     { label: 'Request Certificate', path: ROUTES.CERTIFICATE },
     { label: 'Contact', path: ROUTES.CONTACT },
   ];

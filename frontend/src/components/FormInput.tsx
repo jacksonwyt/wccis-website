@@ -41,7 +41,7 @@ const FormInput: React.FC<FormInputProps> = ({
         placeholder={placeholder}
         autoComplete={autoComplete}
         disabled={disabled}
-        aria-invalid={error ? 'true' : 'false'}
+        aria-invalid="true"
         aria-describedby={error ? `${id}-error` : undefined}
         {...register(id, rules)}
         className={`

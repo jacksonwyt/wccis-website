@@ -22,12 +22,13 @@ const HomePage = () => {
               We compare rates from multiple carriers to find you the best coverage at competitive prices.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button 
-                onClick={() => router.push(ROUTES.INSURE)}
-                className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
-              >
-                Compare Quotes
-              </Button>
+            <Button 
+  onClick={() => router.push(ROUTES.INSURE)}
+  variant="white"  // <-- Add this
+  className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
+>
+  Get Your Quote
+</Button>
               <Button 
                 variant="outline"
                 onClick={() => router.push(ROUTES.CONTACT)}
@@ -82,44 +83,68 @@ const HomePage = () => {
       </section>
 
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Coverage Options</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold mb-4">General Liability</h3>
-              <p className="text-gray-600 mb-4">Compare liability coverage options from multiple carriers.</p>
-              <Link 
-                href={ROUTES.INSURANCE.GENERAL_LIABILITY}
-                className="text-blue-600 font-semibold hover:text-blue-700"
-              >
-                View Options →
-              </Link>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold mb-4">Workers Compensation</h3>
-              <p className="text-gray-600 mb-4">Find competitive workers comp rates for your team.</p>
-              <Link 
-                href={ROUTES.INSURANCE.WORKERS_COMP}
-                className="text-blue-600 font-semibold hover:text-blue-700"
-              >
-                View Options →
-              </Link>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold mb-4">Commercial Auto</h3>
-              <p className="text-gray-600 mb-4">Get quotes from multiple auto insurance carriers.</p>
-              <Link 
-                href={ROUTES.INSURANCE.COMMERCIAL_AUTO}
-                className="text-blue-600 font-semibold hover:text-blue-700"
-              >
-                View Options →
-              </Link>
-            </div>
-          </div>
+  <div className="container mx-auto px-4">
+    <h2 className="text-3xl font-bold text-center mb-12">Coverage Options</h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <h3 className="text-xl font-semibold mb-4">General Liability</h3>
+        <p className="text-gray-600 mb-6">Compare liability coverage options from multiple carriers.</p>
+        <div className="space-y-3">
+          <Link 
+            href={ROUTES.INSURANCE.GENERAL_LIABILITY}
+            className="text-blue-600 font-semibold hover:text-blue-700 block"
+          >
+            Learn More →
+          </Link>
+          <Link 
+            href={ROUTES.INSURANCE.QUOTES.GENERAL_LIABILITY}
+            className="inline-block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Get a Free Quote
+          </Link>
         </div>
-      </section>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <h3 className="text-xl font-semibold mb-4">Workers Compensation</h3>
+        <p className="text-gray-600 mb-6">Find competitive workers comp rates for your team.</p>
+        <div className="space-y-3">
+          <Link 
+            href={ROUTES.INSURANCE.WORKERS_COMP}
+            className="text-blue-600 font-semibold hover:text-blue-700 block"
+          >
+            Learn More →
+          </Link>
+          <Link 
+            href={ROUTES.INSURANCE.QUOTES.WORKERS_COMP}
+            className="inline-block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Get a Free Quote
+          </Link>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <h3 className="text-xl font-semibold mb-4">Commercial Auto</h3>
+        <p className="text-gray-600 mb-6">Get quotes from multiple auto insurance carriers.</p>
+        <div className="space-y-3">
+          <Link 
+            href={ROUTES.INSURANCE.COMMERCIAL_AUTO}
+            className="text-blue-600 font-semibold hover:text-blue-700 block"
+          >
+            Learn More →
+          </Link>
+          <Link 
+            href={ROUTES.INSURANCE.QUOTES.COMMERCIAL_AUTO}
+            className="inline-block w-full bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Get a Free Quote
+          </Link>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       <section className="bg-blue-900 text-white py-16">
         <div className="container mx-auto px-4 text-center">
@@ -128,12 +153,13 @@ const HomePage = () => {
             Let us shop multiple carriers to find you the best coverage at competitive rates.
           </p>
           <div className="flex justify-center gap-4">
-            <Button 
-              onClick={() => router.push(ROUTES.INSURE)}
-              className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
-            >
-              Compare Quotes
-            </Button>
+          <Button 
+  onClick={() => router.push(ROUTES.INSURE)}
+  variant="white"  // <-- Add this
+  className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
+>
+  Get Your Quote Here!
+</Button>
             <Button 
               variant="outline"
               onClick={() => router.push(ROUTES.CONTACT)}

@@ -1,4 +1,5 @@
 // frontend/components/Layout.tsx
+
 import React from 'react';
 import Head from 'next/head';
 import Header from './Header';
@@ -17,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ title, children }) => {
         <meta name="description" content="Contractors Insurance Website" />
       </Head>
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
+      <main className="flex-grow container mx-auto px-4 py-8 mt-20">{children}</main>
       <Footer />
     </div>
   );
