@@ -3,10 +3,11 @@ import React from 'react';
 
 type AlertType = 'success' | 'error' | 'info' | 'warning';
 
-interface AlertProps {
+export interface AlertProps {
   type: AlertType;
   message: string;
   onClose?: () => void;
+  className?: string;
 }
 
 const alertStyles = {
@@ -16,8 +17,8 @@ const alertStyles = {
   warning: 'bg-yellow-50 text-yellow-800 border-yellow-200',
 };
 
-export const Alert: React.FC<AlertProps> = ({ type, message, onClose }) => (
-  <div className={`p-4 rounded-lg border ${alertStyles[type]} relative`}>
+export const Alert: React.FC<AlertProps> = ({ type, message, onClose, className = '' }) => (
+  <div className={`p-4 rounded-lg border ${alertStyles[type]} ${className}`}>
     <p>{message}</p>
     {onClose && (
       <button

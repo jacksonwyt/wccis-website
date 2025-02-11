@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
 import { 
-  Car, ShieldCheck, Tools, Truck, Wrench,
+  Car, ShieldCheck, Truck, Wrench,
   Building, Scale, AlertTriangle 
 } from 'lucide-react';
 import { ROUTES } from '../../utils/routes';
@@ -54,7 +54,7 @@ const CommercialAutoPage = () => {
 
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center mb-4">
-                <Tools className="w-8 h-8 text-blue-600 mr-3" />
+                <Wrench className="w-8 h-8 text-blue-600 mr-3" />
                 <h3 className="text-xl font-semibold">Physical Damage</h3>
               </div>
               <ul className="space-y-3 text-gray-600">

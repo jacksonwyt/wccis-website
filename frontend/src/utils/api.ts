@@ -1,9 +1,6 @@
 // frontend/src/utils/api.ts
-import axios from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
-// API response types
 export interface ApiResponse<T = any> {
   status: 'success' | 'error';
   data?: T;
@@ -13,61 +10,58 @@ export interface ApiResponse<T = any> {
   };
 }
 
-// Request types
-export interface InsuranceQuoteRequest {
-  name: string;
-  email: string;
-  phone: string;
-}
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-export interface CertificateRequest {
-  company: string;
-  policy: string;
-  email: string;
-}
-
-export interface ContactRequest {
-  name: string;
-  email: string;
-  message: string;
-}
-
-// Create axios instance with default config
-const apiClient = axios.create({
+const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Response interceptor for error handling
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN'))
+    ?.split('=')[1];
+
+  if (token && config.headers) {
+    config.headers['X-XSRF-TOKEN'] = token;
+  }
+  return config;
+});
+
 apiClient.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    const message = error.response?.data?.error?.message || 'An unexpected error occurred';
-    return Promise.reject(new Error(message));
+  (response: AxiosResponse) => {
+    const apiResponse: ApiResponse = {
+      status: 'success',
+      data: response.data
+    };
+    return { ...response, data: apiResponse };
+  },
+  (error: any) => {
+    const message = error?.response?.data?.error?.message || 'An unexpected error occurred';
+    return Promise.reject({
+      status: 'error',
+      error: { message }
+    } as ApiResponse);
   }
 );
 
-// API service functions
-export const apiService = {
-  // Insurance quote requests
-  submitQuoteRequest: async (data: InsuranceQuoteRequest): Promise<ApiResponse> => {
-    return apiClient.post('/insure', data);
-  },
-
-  // Certificate requests
-  submitCertificateRequest: async (data: CertificateRequest): Promise<ApiResponse> => {
-    return apiClient.post('/certificate', data);
-  },
-
-  // Contact form submissions
-  submitContactForm: async (data: ContactRequest): Promise<ApiResponse> => {
-    return apiClient.post('/contact', data);
-  },
-
-  // Health check
-  checkHealth: async (): Promise<ApiResponse> => {
-    return apiClient.get('/health');
-  },
+export const submitQuoteRequest = async <T>(data: T): Promise<ApiResponse> => {
+  const response = await apiClient.post('/insure', data);
+  return response.data;
 };
+
+export const submitCertificateRequest = async <T>(data: T): Promise<ApiResponse> => {
+  const response = await apiClient.post('/certificate', data);
+  return response.data;
+};
+
+export const submitContactForm = async <T>(data: T): Promise<ApiResponse> => {
+  const response = await apiClient.post('/contact', data);
+  return response.data;
+};
+
+export { apiClient };

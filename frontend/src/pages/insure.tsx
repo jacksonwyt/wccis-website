@@ -13,11 +13,11 @@ import { Button } from '../components/ui/Button';
 import FormInput from '../components/FormInput';
 import { useFormSubmit } from '../hooks/useFormSubmit';
 import { useFormPersist } from '../hooks/useFormPersist';
-import { apiService } from '../utils/api';
 import { Check } from 'lucide-react';
+import { submitQuoteRequest } from '../utils/api';
 
 /* -------------------------------------------------------------------------
-   Define the full type for the form’s data.
+   Define the full type for the form's data.
    Adjust the properties as needed to match what your API expects.
 --------------------------------------------------------------------------- */
 interface InsuranceQuoteRequest {
@@ -469,18 +469,17 @@ const InsureMePage: React.FC = () => {
     handleSubmit,
     register,
     formState: { errors },
-    watch
+    watch,
+    reset
   } = methods;
 
   useFormPersist(methods, 'quote-comparison-form');
 
-  const { submit, isSubmitting, error } = useFormSubmit(apiService.submitQuoteRequest, {
+  const { submit, isSubmitting, error } = useFormSubmit({
+    submitFn: submitQuoteRequest,
     onSuccess: () => {
-      setSuccessMessage(
-        'Thank you! Your agent will compare quotes from multiple carriers and contact you within 24 hours with the best options.'
-      );
-      methods.reset();
-      setTimeout(() => setSuccessMessage(''), 5000);
+      setSuccessMessage('Quote request received successfully');
+      reset();
     }
   });
 

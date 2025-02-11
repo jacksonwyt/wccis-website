@@ -1,57 +1,56 @@
-// frontend/src/hooks/useFormPersist.ts
-import { useEffect } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+//frontend/src/hooks/useFormPersist.ts
+
+import { useEffect, useCallback } from 'react';
+import { UseFormReturn, Path } from 'react-hook-form';
 
 export const useFormPersist = <T extends Record<string, any>>(
   form: UseFormReturn<T>,
-  key: string
+  key: string,
+  options: {
+    exclude?: Array<keyof T>;
+    validateOnLoad?: boolean;
+  } = {}
 ) => {
-  const { watch, setValue } = form;
+  const { watch, setValue, trigger } = form;
 
-  // Load saved form data on mount
   useEffect(() => {
-    const savedData = localStorage.getItem(key);
-    if (savedData) {
-      try {
+    try {
+      const savedData = localStorage.getItem(key);
+      if (savedData) {
         const parsedData = JSON.parse(savedData);
         Object.keys(parsedData).forEach((field) => {
-          setValue(field as any, parsedData[field]);
+          if (!options.exclude?.includes(field as keyof T)) {
+            setValue(field as Path<T>, parsedData[field], { 
+              shouldValidate: options.validateOnLoad 
+            });
+          }
         });
-      } catch (error) {
-        console.error('Error loading saved form data:', error);
-        localStorage.removeItem(key);
       }
+    } catch (error) {
+      console.error('Error loading saved form data:', error);
+      localStorage.removeItem(key);
     }
-  }, [key, setValue]);
+  }, [key, setValue, trigger, options.exclude, options.validateOnLoad]);
 
-  // Save form data on change
   useEffect(() => {
     const subscription = watch((values) => {
       if (Object.keys(values).length > 0) {
-        localStorage.setItem(key, JSON.stringify(values));
+        const dataToSave = { ...values };
+        if (options.exclude) {
+          options.exclude.forEach((field) => {
+            delete dataToSave[field as string];
+          });
+        }
+        localStorage.setItem(key, JSON.stringify(dataToSave));
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, key]);
+  }, [watch, key, options.exclude]);
 
-  // Clear saved data on successful submission
-  const clearSavedData = () => {
+  const clearSavedData = useCallback(() => {
     localStorage.removeItem(key);
-  };
+  }, [key]);
 
   return { clearSavedData };
 };
-
-// Usage example:
-/*
-const MyForm = () => {
-  const form = useForm<FormData>();
-  const { clearSavedData } = useFormPersist(form, 'my-form-key');
-
-  const onSubmit = async (data: FormData) => {
-    await submit(data);
-    clearSavedData(); // Clear saved data after successful submission
-  };
-}
-*/

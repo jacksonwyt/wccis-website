@@ -8,8 +8,8 @@ import { FormGroup } from '../components/ui/FormGroup';
 import { Button } from '../components/ui/Button';
 import FormInput from '../components/FormInput';
 import { useFormSubmit } from '../hooks/useFormSubmit';
-import { apiService } from '../utils/api';
 import { contactFormSchema, type ContactForm } from '../utils/validation';
+import { submitContactForm } from '../utils/api';
 
 const ContactPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string>('');
@@ -23,11 +23,11 @@ const ContactPage: React.FC = () => {
     resolver: zodResolver(contactFormSchema)
   });
 
-  const { submit, isSubmitting, error } = useFormSubmit(apiService.submitContactForm, {
+  const { submit, isSubmitting, error } = useFormSubmit({
+    submitFn: submitContactForm,
     onSuccess: () => {
-      setSuccessMessage('Your message has been sent successfully! We will get back to you soon.');
+      setSuccessMessage('Message sent successfully');
       reset();
-      setTimeout(() => setSuccessMessage(''), 5000);
     }
   });
 

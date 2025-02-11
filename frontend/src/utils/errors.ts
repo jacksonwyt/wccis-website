@@ -1,5 +1,6 @@
 // frontend/src/utils/errors.ts
-import { AxiosError } from 'axios';
+import type { AxiosError as AxiosErrorType } from 'axios';
+import type { ApiResponse } from './api';
 
 export class AppError extends Error {
   constructor(
@@ -17,22 +18,22 @@ export const handleApiError = (error: unknown): AppError => {
     return error;
   }
 
-  if (error instanceof AxiosError) {
+  const axiosError = error as AxiosErrorType;
+  if (axiosError.isAxiosError) {
+    const response = axiosError.response?.data as ApiResponse;
     return new AppError(
-      error.response?.data?.message || error.message,
-      error.response?.data?.code,
-      error.response?.status
+      response?.error?.message || axiosError.message,
+      response?.error?.code,
+      axiosError.response?.status
     );
-  }
-
-  if (error instanceof Error) {
-    return new AppError(error.message);
   }
 
   return new AppError('An unexpected error occurred');
 };
 
 export const getErrorMessage = (error: unknown): string => {
-  const appError = handleApiError(error);
-  return appError.message;
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'An unexpected error occurred';
 };

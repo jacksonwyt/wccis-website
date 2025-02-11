@@ -1,4 +1,4 @@
-// frontend/src/components/FormInput.tsx
+// frontend/src/components/FormInput.tsx (Enhanced version)
 import React from 'react';
 import { UseFormRegister, FieldError, RegisterOptions } from 'react-hook-form';
 
@@ -11,6 +11,8 @@ interface FormInputProps {
   rules?: RegisterOptions;
   error?: FieldError;
   className?: string;
+  disabled?: boolean;
+  autoComplete?: string;
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -22,6 +24,8 @@ const FormInput: React.FC<FormInputProps> = ({
   rules,
   error,
   className = '',
+  disabled = false,
+  autoComplete,
 }) => {
   return (
     <div className="space-y-2">
@@ -35,16 +39,26 @@ const FormInput: React.FC<FormInputProps> = ({
         id={id}
         type={type}
         placeholder={placeholder}
+        autoComplete={autoComplete}
+        disabled={disabled}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? `${id}-error` : undefined}
         {...register(id, rules)}
         className={`
-          w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+          w-full px-4 py-2 border rounded-lg 
+          focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+          disabled:bg-gray-100 disabled:cursor-not-allowed
           transition duration-200 ease-in-out
           ${error ? 'border-red-500' : 'border-gray-300'}
           ${className}
         `}
       />
       {error && (
-        <p className="text-sm text-red-500 mt-1">
+        <p 
+          id={`${id}-error`}
+          className="text-sm text-red-500 mt-1"
+          role="alert"
+        >
           {error.message}
         </p>
       )}

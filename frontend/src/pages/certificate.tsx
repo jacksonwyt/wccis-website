@@ -8,9 +8,9 @@ import { FormGroup } from '../components/ui/FormGroup';
 import { Button } from '../components/ui/Button';
 import FormInput from '../components/FormInput';
 import { useFormSubmit } from '../hooks/useFormSubmit';
-import { apiService } from '../utils/api';
 import { certificateRequestSchema } from '../utils/validation';
 import { AlertTriangle, FileText, Clock } from 'lucide-react';
+import { submitCertificateRequest } from '../utils/api';
 
 // Infer the full certificate request type from the Zod schema
 type CertificateRequest = z.infer<typeof certificateRequestSchema>;
@@ -42,18 +42,13 @@ const CertificateRequestPage = () => {
   });
 
   // Note: Now the submit function accepts a CertificateRequest object
-  const { submit, isSubmitting, error } = useFormSubmit(
-    apiService.submitCertificateRequest,
-    {
-      onSuccess: () => {
-        setSuccessMessage(
-          'Your certificate request has been received. Our team will process it according to your selected timeframe.'
-        );
-        reset();
-        setTimeout(() => setSuccessMessage(''), 5000);
-      }
+  const { submit, isSubmitting, error } = useFormSubmit({
+    submitFn: submitCertificateRequest,
+    onSuccess: () => {
+      setSuccessMessage('Certificate request received successfully');
+      reset();
     }
-  );
+  });
 
   const requestType = watch('requestType');
   const isRush = watch('isRush');

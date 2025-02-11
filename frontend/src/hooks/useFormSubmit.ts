@@ -1,28 +1,32 @@
 // frontend/src/hooks/useFormSubmit.ts
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { getErrorMessage } from '../utils/errors';
 import { ApiResponse } from '../utils/api';
 
 interface UseFormSubmitOptions<T> {
   onSuccess?: (data: ApiResponse) => void;
   onError?: (error: Error) => void;
+  submitFn: (data: T) => Promise<ApiResponse>;
+  resetForm?: () => void;
 }
 
-export function useFormSubmit<T>(
-  submitFn: (data: T) => Promise<ApiResponse>,
-  options: UseFormSubmitOptions<T> = {}
-) {
+export function useFormSubmit<T>(options: UseFormSubmitOptions<T>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const submit = async (data: T) => {
+  const submit = useCallback(async (data: T) => {
+    if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
-      setError(null);
+      setError(undefined);
       
-      const response = await submitFn(data);
+      const response = await options.submitFn(data);
       
+      setIsSubmitted(true);
       options.onSuccess?.(response);
+      options.resetForm?.();
       return response;
     } catch (err) {
       const errorMessage = getErrorMessage(err);
@@ -32,32 +36,20 @@ export function useFormSubmit<T>(
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isSubmitting, options]);
+
+  const reset = useCallback(() => {
+    setError(undefined);
+    setIsSubmitted(false);
+    options.resetForm?.();
+  }, [options]);
 
   return {
     submit,
+    reset,
     isSubmitting,
+    isSubmitted,
     error,
     setError
   };
 }
-
-// Usage example:
-/*
-const MyForm = () => {
-  const { submit, isSubmitting, error } = useFormSubmit(apiService.submitQuoteRequest, {
-    onSuccess: () => {
-      toast.success('Form submitted successfully!');
-      reset();
-    }
-  });
-
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      await submit(data);
-    } catch (err) {
-      // Handle error if needed
-    }
-  });
-}
-*/
