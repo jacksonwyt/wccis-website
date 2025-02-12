@@ -7,6 +7,7 @@ import {
   Building, Scale, AlertTriangle 
 } from 'lucide-react';
 import { ROUTES } from '../../utils/routes';
+import Image from 'next/image';
 
 const CommercialAutoPage = () => {
   const router = useRouter();
@@ -14,8 +15,20 @@ const CommercialAutoPage = () => {
   return (
     <Layout title="Commercial Auto Insurance | WCCIS">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section className="relative text-white py-32">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero/auto.jpg"
+            alt="Commercial Auto Fleet"
+            fill
+            className="object-cover object-[center_70%]"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-blue-700/30" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">
               Commercial Auto Insurance for Contractors
@@ -28,7 +41,6 @@ const CommercialAutoPage = () => {
               onClick={() => router.push(ROUTES.INSURE)}
               variant="white"
               className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
-              
             >
               Get Your Quote
             </Button>

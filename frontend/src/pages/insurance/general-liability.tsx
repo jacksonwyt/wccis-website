@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import { Button } from '../../components/ui/Button';
@@ -10,9 +11,22 @@ const GeneralLiabilityPage = () => {
 
   return (
     <Layout title="General Liability Insurance | WCCIS">
+
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section className="relative text-white py-24">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero/constructionsite.jpg"
+            alt="Construction Site"
+            fill
+            className="object-cover object-[center_60%]"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-blue-700/30" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">
               General Liability Insurance for Contractors

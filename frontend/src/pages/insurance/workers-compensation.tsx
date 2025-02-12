@@ -7,6 +7,7 @@ import {
   Building2, Briefcase, Shield 
 } from 'lucide-react';
 import { ROUTES } from '../../utils/routes';
+import Image from 'next/image';
 
 const WorkersCompensationPage = () => {
   const router = useRouter();
@@ -14,8 +15,20 @@ const WorkersCompensationPage = () => {
   return (
     <Layout title="Workers Compensation Insurance | WCCIS">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section className="relative text-white py-24">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero/workers.jpg"
+            alt="Construction Workers"
+            fill
+            className="object-cover object-[center_45%]"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-blue-700/30" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold mb-4">
               Workers' Compensation Insurance

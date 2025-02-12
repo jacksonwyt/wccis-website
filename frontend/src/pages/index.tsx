@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/Button';
@@ -11,24 +12,37 @@ const HomePage = () => {
 
   return (
     <Layout title="WCCIS - Independent Insurance Agency for Contractors">
-      <section className="relative bg-gradient-to-r from-blue-900 to-blue-700 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto px-4 py-24">
+      {/* Hero Section */}
+      <section className="relative min-h-[50vh] flex items-center">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero/sunset-skyline.jpg"
+            alt="San Diego Skyline"
+            fill
+            className="object-cover object-[center_20%]"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 to-blue-700/20" />
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
-            <h1 className="text-5xl font-bold mb-6">
+            <h1 className="text-5xl font-bold text-white mb-6">
               Your Independent Agent for Contractor Insurance
             </h1>
             <p className="text-xl mb-8 text-blue-100">
               We compare rates from multiple carriers to find you the best coverage at competitive prices.
             </p>
             <div className="flex flex-wrap gap-4">
-            <Button 
-  onClick={() => router.push(ROUTES.INSURE)}
-  variant="white"  // <-- Add this
-  className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-4 text-lg"
->
-  Get Your Quote
-</Button>
+              <Button 
+                onClick={() => router.push(ROUTES.INSURE)}
+                variant="white"
+                className="px-8 py-4 text-lg"
+              >
+                Get Your Quote
+              </Button>
               <Button 
                 variant="outline"
                 onClick={() => router.push(ROUTES.CONTACT)}
