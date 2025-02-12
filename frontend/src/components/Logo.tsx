@@ -9,7 +9,7 @@ const Logo = () => {
       href={ROUTES.HOME}
       className="block relative"
     >
-      <div className="relative w-[200px] h-[70px]">
+      <div className="relative w-[150px] h-[70px]">
         <Image
           src="/images/logo.png"
           alt="WCCIS Logo"

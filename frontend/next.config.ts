@@ -6,8 +6,7 @@ const nextConfig = {
     unoptimized: process.env.NODE_ENV !== 'production',
   },
   experimental: {
-    // This should match your app's behavior
-    appDir: false
+   
   }
 }
 
