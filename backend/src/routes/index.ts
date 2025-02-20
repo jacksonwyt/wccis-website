@@ -1,9 +1,10 @@
 // backend/src/routes/index.ts
+
 import { Router } from 'express';
 import healthRoutes from './health';
 import insureRoutes from './insure';
-import certificateRoutes from './certificate';
 import contactRoutes from './contact';
+import blogRoutes from './blog';
 
 const router = Router();
 
@@ -13,8 +14,8 @@ router.use('/health', healthRoutes);
 // Insurance routes
 router.use('/insure', insureRoutes);
 
-// Certificate routes
-router.use('/certificate', certificateRoutes);
+// Blog routes
+router.use('/blog', blogRoutes);
 
 // Contact routes
 router.use('/contact', contactRoutes);

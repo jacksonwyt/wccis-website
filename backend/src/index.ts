@@ -11,7 +11,7 @@ dotenv.config();
 // Import routes
 import healthRoutes from './routes/health';
 import insureRoutes from './routes/insure';
-import certificateRoutes from './routes/certificate';
+import blogRoutes from './routes/blog';
 import contactRoutes from './routes/contact';
 
 const app = express();
@@ -31,7 +31,7 @@ configureSecurityMiddleware(app);
 // Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/insure', insureRoutes);
-app.use('/api/certificate', certificateRoutes);
+app.use('/api/blog', blogRoutes);
 app.use('/api/contact', contactRoutes);
 
 // Error handling middleware should be after routes
