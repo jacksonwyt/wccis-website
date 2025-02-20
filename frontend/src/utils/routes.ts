@@ -1,9 +1,11 @@
 // frontend/src/utils/routes.ts
+
 export const ROUTES = {
     HOME: '/',
-    INSURE: '/insure',
-    CERTIFICATE: '/certificate',
+    ABOUT: '/about',
     CONTACT: '/contact',
+    INSURE: '/insure',
+    BLOG: '/blog',
     INSURANCE: {
       GENERAL_LIABILITY: '/insurance/general-liability',
       WORKERS_COMP: '/insurance/workers-compensation',
@@ -18,15 +20,7 @@ export const ROUTES = {
   
   export const NAVIGATION_ITEMS = [
     { label: 'Home', path: ROUTES.HOME },
-    { 
-      label: 'Insurance',
-      path: ROUTES.INSURANCE.GENERAL_LIABILITY,
-      subItems: [
-        { label: 'General Liability', path: ROUTES.INSURANCE.GENERAL_LIABILITY },
-        { label: 'Workers Compensation', path: ROUTES.INSURANCE.WORKERS_COMP },
-        { label: 'Commercial Auto', path: ROUTES.INSURANCE.COMMERCIAL_AUTO },
-      ]
-    },
-    { label: 'Request Certificate', path: ROUTES.CERTIFICATE },
+    { label: 'About', path: ROUTES.ABOUT },
     { label: 'Contact', path: ROUTES.CONTACT },
+    { label: 'Blog', path: ROUTES.BLOG },
   ];

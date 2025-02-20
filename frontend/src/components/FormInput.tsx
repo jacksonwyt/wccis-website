@@ -1,6 +1,6 @@
 // frontend/src/components/FormInput.tsx (Enhanced version)
-import React from 'react';
-import { UseFormRegister, FieldError, RegisterOptions } from 'react-hook-form';
+import React from "react";
+import { UseFormRegister, FieldError, RegisterOptions } from "react-hook-form";
 
 interface FormInputProps {
   id: string;
@@ -18,21 +18,20 @@ interface FormInputProps {
 const FormInput: React.FC<FormInputProps> = ({
   id,
   label,
-  type = 'text',
+  type = "text",
   placeholder,
   register,
   rules,
   error,
-  className = '',
+  className = "",
   disabled = false,
   autoComplete,
 }) => {
+  const { ref, ...rest } = register(id, rules);
+
   return (
     <div className="space-y-2">
-      <label 
-        htmlFor={id} 
-        className="block text-sm font-medium text-gray-700"
-      >
+      <label htmlFor={id} className="block text-sm font-medium text-futuristic-light">
         {label}
       </label>
       <input
@@ -41,24 +40,16 @@ const FormInput: React.FC<FormInputProps> = ({
         placeholder={placeholder}
         autoComplete={autoComplete}
         disabled={disabled}
-        aria-invalid="true"
+        {...rest}
+        ref={ref}
+        aria-invalid={error ? "true" : "false"}
         aria-describedby={error ? `${id}-error` : undefined}
-        {...register(id, rules)}
-        className={`
-          w-full px-4 py-2 border rounded-lg 
-          focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-          disabled:bg-gray-100 disabled:cursor-not-allowed
-          transition duration-200 ease-in-out
-          ${error ? 'border-red-500' : 'border-gray-300'}
-          ${className}
-        `}
+        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-futuristic-accent focus:border-futuristic-accent transition duration-200 ease-in-out ${
+          error ? "border-red-500" : "border-futuristic-light/30"
+        } ${className}`}
       />
       {error && (
-        <p 
-          id={`${id}-error`}
-          className="text-sm text-red-500 mt-1"
-          role="alert"
-        >
+        <p id={`${id}-error`} className="text-sm text-red-500 mt-1" role="alert">
           {error.message}
         </p>
       )}

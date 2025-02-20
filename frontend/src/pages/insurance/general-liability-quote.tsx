@@ -9,7 +9,7 @@ import FormInput from '../../components/FormInput';
 import { FormGroup } from '../../components/ui/FormGroup';
 import { useFormSubmit } from '../../hooks/useFormSubmit';
 import { submitQuoteRequest } from '../../utils/api';
-import QuoteLayout from '@components/QuoteLayout';
+import QuoteLayout from '../../components/QuoteLayout';
 
 const glQuoteSchema = z.object({
   // Step 1: Contact Information
@@ -347,7 +347,7 @@ const GeneralLiabilityQuotePage = () => {
           {/* Navigation Buttons */}
           <div className="flex justify-between">
             {currentStep > 0 ? (
-              <Button type="button" variant="outline" onClick={onBack}>
+              <Button type="button" variant="secondary" onClick={onBack}>
                 Back
               </Button>
             ) : (

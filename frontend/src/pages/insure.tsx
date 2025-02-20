@@ -81,7 +81,7 @@ const InsurePage = () => {
           <h3 className="text-xl font-semibold mb-4">Need Help Choosing?</h3>
           <p className="text-gray-600 mb-6">Our insurance experts can help you determine the right coverage for your business.</p>
           <Button 
-            variant="outline"
+            variant="secondary"
             onClick={() => router.push(ROUTES.CONTACT)}
             className="px-8"
           >

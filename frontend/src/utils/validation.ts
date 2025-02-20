@@ -33,14 +33,9 @@ export const certificateRequestSchema = z.object({
 
 // Contact Form Schema
 export const contactFormSchema = z.object({
-  name: z.string()
-    .min(NAME_MIN_LENGTH, 'Name must be at least 2 characters')
-    .max(100, 'Name is too long'),
-  email: z.string()
-    .email('Invalid email address'),
-  message: z.string()
-    .min(MESSAGE_MIN_LENGTH, 'Message must be at least 10 characters')
-    .max(1000, 'Message is too long')
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
 // Infer types from schemas

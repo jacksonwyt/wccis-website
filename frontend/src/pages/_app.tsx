@@ -1,9 +1,8 @@
 // frontend/src/pages/_app.tsx
-// frontend/src/pages/_app.tsx
-import type { AppProps } from 'next/app';
-import { useEffect, useState } from 'react';
-import ErrorBoundary from '../components/ErrorBoundary';
-import '../styles/globals.css';
+import type { AppProps } from "next/app";
+import { useEffect, useState } from "react";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import "@/styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [mounted, setMounted] = useState(false);
@@ -12,13 +11,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <ErrorBoundary>
-      <Component {...pageProps} />
+      <div className="bg-futuristic-bg min-h-screen">
+        <Component {...pageProps} />
+      </div>
     </ErrorBoundary>
   );
 }

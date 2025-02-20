@@ -10,7 +10,7 @@ import { FormGroup } from '../../components/ui/FormGroup';
 import { Plus, Minus } from 'lucide-react';
 import { useFormSubmit } from '../../hooks/useFormSubmit';
 import { submitQuoteRequest } from '../../utils/api';
-import QuoteLayout from '@components/QuoteLayout';
+import QuoteLayout from '../../components/QuoteLayout';
 
 const wcQuoteSchema = z.object({
   // Step 1: Contact Information
@@ -248,7 +248,7 @@ const WorkersCompQuotePage = () => {
                     {index > 0 && (
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="secondary"
                         onClick={() => remove(index)}
                         className="mt-2"
                       >
@@ -260,7 +260,7 @@ const WorkersCompQuotePage = () => {
                 ))}
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   onClick={() =>
                     append({
                       classCode: '',
@@ -299,7 +299,7 @@ const WorkersCompQuotePage = () => {
           {/* Navigation Buttons */}
           <div className="flex justify-between">
             {currentStep > 0 ? (
-              <Button type="button" variant="outline" onClick={onBack}>
+              <Button type="button" variant="secondary" onClick={onBack}>
                 Back
               </Button>
             ) : (

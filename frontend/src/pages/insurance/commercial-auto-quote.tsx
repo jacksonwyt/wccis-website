@@ -11,7 +11,7 @@ import FormInput from '../../components/FormInput';
 import { useFormSubmit } from '../../hooks/useFormSubmit';
 import { Plus, Minus } from 'lucide-react';
 import { submitQuoteRequest } from '../../utils/api';
-import QuoteLayout from '@components/QuoteLayout';
+import QuoteLayout from '../../components/QuoteLayout';
 
 const caQuoteSchema = z.object({
   // Contact Information
@@ -187,7 +187,7 @@ const CommercialAutoQuotePage = () => {
                     {index > 0 && (
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="secondary"
                         onClick={() => removeVehicle(index)}
                         className="mt-2"
                       >
@@ -199,7 +199,7 @@ const CommercialAutoQuotePage = () => {
                 ))}
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => appendVehicle({ year: '', make: '', model: '', vin: '' })}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -246,7 +246,7 @@ const CommercialAutoQuotePage = () => {
                     {index > 0 && (
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="secondary"
                         onClick={() => removeDriver(index)}
                         className="mt-2"
                       >
@@ -258,7 +258,7 @@ const CommercialAutoQuotePage = () => {
                 ))}
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   onClick={() =>
                     appendDriver({ fullName: '', dateOfBirth: '', licenseNumber: '' })
                   }
@@ -317,7 +317,7 @@ const CommercialAutoQuotePage = () => {
           {/* Navigation Buttons */}
           <div className="flex justify-between">
             {currentStep > 0 ? (
-              <Button type="button" variant="outline" onClick={onBack}>
+              <Button type="button" variant="secondary" onClick={onBack}>
                 Back
               </Button>
             ) : (

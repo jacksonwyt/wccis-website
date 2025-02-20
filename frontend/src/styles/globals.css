@@ -1,16 +1,70 @@
 /* frontend/src/styles/globals.css */
-/* @tailwind directives are valid - they're processed by Tailwind CSS */
-/* frontend/src/styles/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 25, 50, 85;
-  --background-rgb: 248, 250, 252;
+/* Base styles using CSS variables for fallback if needed */
+@layer base {
+  html {
+    /* Using our futuristic background instead of gray-100 */
+    background-color: #0d0d0d;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    /* Use our futuristic background and light text */
+    background-color: #0d0d0d;
+    color: #e3e1e3;
+    font-family: system-ui, sans-serif;
+  }
+
+  /* Remove the legacy universal border rule if not needed */
+  /* * {
+    @apply border-border;
+  } */
+  
+  /* Custom CSS variables can remain if you need them for components */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 24 9.8% 10%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 20 14.3% 4.1%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+/* Improved readability for paragraphs and headings */
+p {
+  @apply leading-7;
+}
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold leading-tight;
+}
+
+/* Enhanced link styles */
+a {
+  @apply transition-colors duration-200;
+}
+a:hover {
+  @apply text-futuristic-accent;
 }

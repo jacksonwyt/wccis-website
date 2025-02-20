@@ -1,55 +1,28 @@
 // frontend/src/hooks/useFormSubmit.ts
-import { useState, useCallback } from 'react';
-import { getErrorMessage } from '../utils/errors';
-import { ApiResponse } from '../utils/api';
+import { useState } from 'react';
 
 interface UseFormSubmitOptions<T> {
-  onSuccess?: (data: ApiResponse) => void;
-  onError?: (error: Error) => void;
-  submitFn: (data: T) => Promise<ApiResponse>;
-  resetForm?: () => void;
+  submitFn: (data: T) => Promise<any>;
+  onSuccess?: () => void;
 }
 
-export function useFormSubmit<T>(options: UseFormSubmitOptions<T>) {
+export function useFormSubmit<T>({ submitFn, onSuccess }: UseFormSubmitOptions<T>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string>('');
 
-  const submit = useCallback(async (data: T) => {
-    if (isSubmitting) return;
-
+  const submit = async (data: T) => {
+    setIsSubmitting(true);
+    setError('');
+    
     try {
-      setIsSubmitting(true);
-      setError(undefined);
-      
-      const response = await options.submitFn(data);
-      
-      setIsSubmitted(true);
-      options.onSuccess?.(response);
-      options.resetForm?.();
-      return response;
+      await submitFn(data);
+      onSuccess?.();
     } catch (err) {
-      const errorMessage = getErrorMessage(err);
-      setError(errorMessage);
-      options.onError?.(err as Error);
-      throw err;
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, options]);
-
-  const reset = useCallback(() => {
-    setError(undefined);
-    setIsSubmitted(false);
-    options.resetForm?.();
-  }, [options]);
-
-  return {
-    submit,
-    reset,
-    isSubmitting,
-    isSubmitted,
-    error,
-    setError
   };
+
+  return { submit, isSubmitting, error };
 }
