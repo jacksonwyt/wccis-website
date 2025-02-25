@@ -28,7 +28,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(({
   const variantStyles = {
     default: 'hover:from-white/50 hover:via-white/40 hover:to-white/30 dark:hover:from-gray-900/50 dark:hover:via-gray-900/40 dark:hover:to-gray-900/30',
     hover: 'hover:-translate-y-1 hover:from-white/70 hover:to-white/40 dark:hover:from-gray-900/70 dark:hover:to-gray-900/40',
-    active: 'bg-gradient-to-br from-blue-500/20 via-blue-500/10 to-purple-500/10',
+    active: 'bg-gradient-to-br from-blue-500/20 via-blue-500/10 to-blue-500/5',
     gradient: 'bg-gradient-to-br from-white/30 via-white/20 to-white/10 dark:from-gray-900/30 dark:via-gray-900/20 dark:to-gray-900/10'
   };
 
@@ -41,6 +41,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(({
         intensityStyles[intensity],
         variantStyles[variant],
         'border',
+        'rounded-[var(--border-radius-lg)]',
         className
       )}
       {...props}
@@ -70,19 +71,12 @@ export const FeatureGlassCard: React.FC<{
   description: string;
 }> = ({ icon, title, description }) => {
   return (
-    <GlassCard 
-      variant="hover" 
-      className="p-6 group border border-white/10"
-    >
-      <div className="mb-4 inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+    <GlassCard className="p-6 border h-full">
+      <div className="mb-4 flex items-center justify-center w-12 h-12 rounded-[var(--border-radius-sm)] bg-brand-primary/10 text-brand-primary">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">
-        {title}
-      </h3>
-      <p className="text-gray-600 dark:text-gray-300">
-        {description}
-      </p>
+      <h3 className="text-xl font-bold mb-3">{title}</h3>
+      <p className="text-gray-500 dark:text-gray-400">{description}</p>
     </GlassCard>
   );
 };
@@ -93,20 +87,15 @@ export const ContentGlassCard: React.FC<{
   footer?: React.ReactNode;
 }> = ({ title, content, footer }) => {
   return (
-    <GlassCard 
-      variant="gradient" 
-      className="overflow-hidden"
-    >
-      <div className="p-6">
-        <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          {title}
-        </h3>
-        <div className="text-gray-600 dark:text-gray-300">
-          {content}
-        </div>
+    <GlassCard className="border h-full flex flex-col">
+      <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+        <h3 className="text-xl font-bold">{title}</h3>
+      </div>
+      <div className="p-6 flex-1">
+        {content}
       </div>
       {footer && (
-        <div className="px-6 py-4 border-t border-gray-200/10 bg-gray-50/50 dark:bg-gray-800/50">
+        <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 rounded-b-[var(--border-radius-lg)]">
           {footer}
         </div>
       )}

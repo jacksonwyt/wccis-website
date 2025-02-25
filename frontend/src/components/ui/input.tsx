@@ -38,83 +38,69 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               'absolute left-3 transition-all duration-200 pointer-events-none',
               (isFocused || hasValue) 
                 ? '-top-2 text-xs bg-black px-1 z-10'
-                : 'top-3 text-base',
-              isFocused ? 'text-blue-400' : 'text-gray-400',
-              error && 'text-red-400'
+                : 'top-3 text-sm text-gray-500'
             )}
           >
             {label}
           </label>
         )}
-
-        {/* Input Container */}
+        
         <div className="relative">
+          {Icon && (
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Icon className="h-5 w-5 text-gray-400" />
+            </div>
+          )}
+          
           <input
-            type={type}
             ref={ref}
-            onFocus={() => setIsFocused(true)}
+            type={type}
+            className={cn(
+              'w-full bg-gray-700/30 border-gray-700/50 text-gray-200',
+              'rounded-[var(--border-radius-md)] py-3',
+              'focus:ring-1 focus:ring-brand-primary focus:border-brand-primary',
+              'transition-all duration-200',
+              error && 'border-red-500 focus:ring-red-500 focus:border-red-500',
+              success && 'border-green-500 focus:ring-green-500 focus:border-green-500',
+              Icon ? 'pl-10' : 'pl-4',
+              'pr-4',
+              label ? 'pt-4 pb-2' : 'py-3',
+              className
+            )}
+            onFocus={(e) => {
+              setIsFocused(true);
+              props.onFocus?.(e);
+            }}
             onBlur={(e) => {
               setIsFocused(false);
               setHasValue(e.target.value !== '');
+              props.onBlur?.(e);
             }}
-            onChange={(e) => setHasValue(e.target.value !== '')}
-            className={cn(
-              'w-full px-3 py-3 bg-white/[0.07] backdrop-blur-sm',
-              'border transition-all duration-200',
-              'text-white placeholder-gray-400',
-              'focus:outline-none focus:ring-1',
-              error
-                ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20'
-                : success
-                ? 'border-green-500/50 focus:border-green-500 focus:ring-green-500/20'
-                : 'border-white/[0.1] focus:border-blue-500 focus:ring-blue-500/20',
-              Icon && 'pl-10',
-              className
-            )}
+            onChange={(e) => {
+              setHasValue(e.target.value !== '');
+              props.onChange?.(e);
+            }}
             {...props}
           />
-
-          {/* Left Icon */}
-          {Icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Icon className="w-5 h-5" />
+          
+          {error && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <AlertCircle className="h-5 w-5 text-red-500" />
             </div>
           )}
-
-          {/* Status Icons */}
-          {(error || success) && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              {error ? (
-                <AlertCircle className="w-5 h-5 text-red-500" />
-              ) : (
-                <Check className="w-5 h-5 text-green-500" />
-              )}
+          
+          {success && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <Check className="h-5 w-5 text-green-500" />
             </div>
           )}
-
-          {/* Animated Focus Border */}
-          <div
-            className={cn(
-              'absolute inset-0 pointer-events-none',
-              'transition-opacity duration-300',
-              isFocused ? 'opacity-100' : 'opacity-0',
-              error
-                ? 'border-2 border-red-500/50'
-                : success
-                ? 'border-2 border-green-500/50'
-                : 'border-2 border-blue-500/50'
-            )}
-          />
         </div>
-
-        {/* Helper Text or Error Message */}
+        
         {(helperText || error) && (
-          <p
-            className={cn(
-              'mt-1.5 text-sm',
-              error ? 'text-red-400' : 'text-gray-400'
-            )}
-          >
+          <p className={cn(
+            'mt-1 text-xs',
+            error ? 'text-red-500' : 'text-gray-500'
+          )}>
             {error || helperText}
           </p>
         )}

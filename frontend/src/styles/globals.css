@@ -16,6 +16,9 @@
   --transition-slow: 700ms ease-in-out;
   --transition-medium: 500ms ease-in-out;
   --transition-fast: 300ms ease-in-out;
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+  --border-radius-lg: 6px;
 }
 
 @layer base {
@@ -28,9 +31,7 @@
   }
 
   /* Improved text readability on colored backgrounds */
-  .bg-pink-500, .bg-purple-500, .bg-blue-500,
-  .bg-pink-600, .bg-purple-600, .bg-blue-600,
-  .bg-pink-700, .bg-purple-700, .bg-blue-700 {
+  .bg-blue-500, .bg-blue-600, .bg-blue-700 {
     @apply text-white;
   }
 
@@ -57,7 +58,7 @@
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-brand-primary text-white rounded-lg
+    @apply px-6 py-3 bg-brand-primary text-white rounded-[var(--border-radius-md)]
            hover:bg-brand-secondary transition-colors duration-200
            font-medium focus:outline-none focus:ring-2 
            focus:ring-brand-primary focus:ring-offset-2;
@@ -65,13 +66,13 @@
 
   .btn-outline {
     @apply px-6 py-3 border-2 border-brand-primary text-brand-primary 
-           rounded-lg hover:bg-brand-primary hover:text-white
+           rounded-[var(--border-radius-md)] hover:bg-brand-primary hover:text-white
            transition-all duration-200 font-medium;
   }
 
   .card {
     @apply bg-gradient-to-br from-white via-white/95 to-brand-light/10 
-           rounded-xl shadow-lg p-6 
+           rounded-[var(--border-radius-lg)] shadow-lg p-6 
            hover:shadow-xl transition-all duration-500
            hover:from-white hover:via-white/90 hover:to-brand-light/20
            border border-brand-light/10;
@@ -82,7 +83,7 @@
            from-white/60 via-white/40 to-white/30
            dark:from-gray-900/60 dark:via-gray-900/40 dark:to-gray-900/30
            border border-brand-light/10
-           rounded-xl shadow-lg transition-all duration-500;
+           rounded-[var(--border-radius-lg)] shadow-lg transition-all duration-500;
   }
 
   .gradient-text {
@@ -92,7 +93,7 @@
 
   .nav-link {
     @apply text-gray-600 hover:text-brand-primary transition-colors
-           font-medium px-4 py-2 rounded-lg hover:bg-brand-primary/5;
+           font-medium px-4 py-2 rounded-[var(--border-radius-md)] hover:bg-brand-primary/5;
   }
 
   .nav-link-active {
@@ -100,7 +101,7 @@
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg border border-brand-light
+    @apply w-full px-4 py-3 rounded-[var(--border-radius-md)] border border-brand-light
            focus:outline-none focus:ring-2 focus:ring-brand-primary
            focus:border-transparent transition-all duration-200;
   }
@@ -165,7 +166,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-brand-primary/50 rounded-full hover:bg-brand-primary/70;
+  @apply bg-brand-primary/50 rounded-none hover:bg-brand-primary/70;
 }
 
 

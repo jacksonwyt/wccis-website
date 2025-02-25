@@ -31,7 +31,7 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       className={cn(
-        'transition-all duration-300',
+        'transition-all duration-300 rounded-[var(--border-radius-lg)]',
         variants[variant],
         hoverEffects[hover],
         className
@@ -39,7 +39,7 @@ export const Card: React.FC<CardProps> = ({
       {...props}
     >
       {/* Gradient overlay for enhanced depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.09] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.09] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-[var(--border-radius-lg)]" />
       
       {/* Content */}
       <div className="relative z-10">
@@ -64,20 +64,14 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
 }) => {
   return (
     <Card
-      variant="glass"
-      hover="glow"
-      className="group p-6 border border-white/10"
+      className="p-6 flex flex-col items-start gap-4 hover:shadow-md"
       {...props}
     >
-      <div className="mb-4 inline-block bg-gradient-to-r from-blue-500/30 to-blue-700/30 p-3 group-hover:from-blue-500/40 group-hover:to-blue-700/40 transition-colors">
-        <Icon className="h-6 w-6 text-blue-400 group-hover:text-blue-300 transition-colors" />
+      <div className="rounded-[var(--border-radius-sm)] bg-brand-primary/10 p-3 text-brand-primary">
+        <Icon className="h-6 w-6" />
       </div>
-      <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors">
-        {title}
-      </h3>
-      <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-        {description}
-      </p>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="text-gray-500 dark:text-gray-400">{description}</p>
     </Card>
   );
 };
@@ -99,44 +93,59 @@ export const PricingCard: React.FC<PricingCardProps> = ({
 }) => {
   return (
     <Card
-      variant={isPopular ? 'gradient' : 'glass'}
-      hover="glow"
       className={cn(
-        'p-8',
-        isPopular && 'border-blue-500/50 shadow-xl shadow-blue-500/20'
+        "p-6 flex flex-col",
+        isPopular ? "border-2 border-brand-primary/30" : ""
       )}
       {...props}
     >
       {isPopular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-500 text-white text-sm rounded-full">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-brand-primary text-white px-4 py-1 rounded-[var(--border-radius-sm)] text-sm font-semibold shadow-sm">
           Most Popular
-        </span>
+        </div>
       )}
-      <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
-      <div className="mb-6">
-        <span className="text-4xl font-bold text-white">{price}</span>
-        <span className="text-gray-400">/month</span>
+      
+      <div className="mb-6 mt-3">
+        <h3 className="text-xl font-bold text-center">{title}</h3>
       </div>
-      <ul className="space-y-4">
-        {features.map((feature) => (
-          <li key={feature} className="flex items-center text-gray-300">
+      
+      <div className="flex justify-center items-baseline my-8">
+        <span className="text-4xl font-extrabold">{price}</span>
+        <span className="ml-1 text-gray-500 dark:text-gray-400">/month</span>
+      </div>
+      
+      <ul className="space-y-4 mb-8">
+        {features.map((feature, i) => (
+          <li key={i} className="flex items-center">
             <svg
-              className="w-5 h-5 text-blue-400 mr-3"
+              className="h-5 w-5 text-brand-primary mr-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
                 d="M5 13l4 4L19 7"
-              />
+              ></path>
             </svg>
-            {feature}
+            <span className="text-gray-600 dark:text-gray-300">{feature}</span>
           </li>
         ))}
       </ul>
+      
+      <button
+        className={cn(
+          "mt-auto py-3 w-full rounded-[var(--border-radius-md)] font-medium transition-colors duration-200",
+          isPopular
+            ? "bg-brand-primary text-white hover:bg-brand-dark"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+        )}
+      >
+        Get Started
+      </button>
     </Card>
   );
 };
@@ -159,38 +168,30 @@ export const ContentCard: React.FC<ContentCardProps> = ({
   ...props
 }) => {
   return (
-    <Card
-      variant="glass"
-      hover="lift"
-      className="group overflow-hidden"
-      {...props}
-    >
+    <Card className="overflow-hidden group" {...props}>
       {image && (
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-48 w-full">
           <Image
             src={image}
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transform group-hover:scale-105 transition-transform duration-500"
-            priority={true}
-            quality={85}
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
       )}
       <div className="p-6">
         {category && (
-          <span className="inline-block px-3 py-1 rounded-full text-sm bg-blue-500/10 text-blue-400 mb-4">
-            {category}
-          </span>
+          <div className="mb-2">
+            <span className="text-xs font-medium px-2 py-1 bg-brand-primary/10 text-brand-primary rounded-[var(--border-radius-sm)]">
+              {category}
+            </span>
+          </div>
         )}
-        <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors">
-          {title}
-        </h3>
-        <p className="text-gray-400 mb-4">{excerpt}</p>
+        <h3 className="text-xl font-bold mb-2">{title}</h3>
+        <p className="text-gray-500 dark:text-gray-400 mb-4">{excerpt}</p>
         {date && (
-          <p className="text-sm text-gray-500">{date}</p>
+          <div className="text-sm text-gray-400 dark:text-gray-500">{date}</div>
         )}
       </div>
     </Card>
