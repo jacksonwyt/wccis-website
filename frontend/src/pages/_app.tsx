@@ -11,7 +11,7 @@ import "@/styles/animations.css";
 // Loading fallback components
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-pulse">Loading...</div>
+    <div>Loading...</div>
   </div>
 );
 

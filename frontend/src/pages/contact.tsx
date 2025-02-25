@@ -30,7 +30,7 @@ const ContactPage = () => {
       <section className="relative py-24">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent animate-hero-pulse" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent" />
         </div>
         <div className="container relative mx-auto px-4">
           <div className="max-w-3xl">
@@ -48,9 +48,9 @@ const ContactPage = () => {
       </section>
 
       <section className="py-16 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
-        {/* Animated gradient background */}
+        {/* Static gradient background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-500/10 to-blue-400/10 animate-gradient-xy" style={{ animationDelay: '-2s' }} />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-500/10 to-blue-400/10" />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-gray-900" />
         </div>
         <div className="container mx-auto px-4">

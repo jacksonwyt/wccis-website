@@ -44,7 +44,7 @@ const BlogPage = () => {
       <section className="relative py-24">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent animate-hero-pulse" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent" />
         </div>
         <div className="container relative mx-auto px-4">
           <div className="max-w-3xl">

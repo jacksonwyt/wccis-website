@@ -67,7 +67,7 @@ export const FormLayout: React.FC<FormLayoutProps> = ({
             <Alert
               type="error"
               message={error}
-              className="mb-6 animate-in fade-in slide-in-from-top-1"
+              className="mb-6"
             />
           )}
 
@@ -75,7 +75,7 @@ export const FormLayout: React.FC<FormLayoutProps> = ({
             <Alert
               type="success"
               message={success}
-              className="mb-6 animate-in fade-in slide-in-from-top-1"
+              className="mb-6"
             />
           )}
 

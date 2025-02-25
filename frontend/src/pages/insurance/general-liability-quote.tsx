@@ -17,7 +17,7 @@ const DynamicForm = dynamic(
 
 // Simple loading skeleton for the form
 const FormSkeleton = () => (
-  <div className="animate-pulse space-y-6">
+  <div className="space-y-6">
     {[...Array(7)].map((_, i) => (
       <div key={i} className="space-y-2">
         <div className="h-4 bg-gray-200 rounded w-1/4"></div>

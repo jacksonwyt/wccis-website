@@ -11,7 +11,7 @@ const FormInput = lazy(() => import('./FormInput'));
 
 // Simple loading fallback
 const InputFallback = () => (
-  <div className="animate-pulse h-14 bg-gray-100 rounded-md"></div>
+  <div className="h-14 bg-gray-100 rounded-md"></div>
 );
 
 interface Field {
@@ -97,7 +97,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = React.memo(({
         {fields.map((field) => (
           <InputFallback key={field.name} />
         ))}
-        <div className="animate-pulse h-10 w-full bg-blue-100 rounded-md"></div>
+        <div className="h-10 w-full bg-blue-100 rounded-md"></div>
       </div>
     );
   }

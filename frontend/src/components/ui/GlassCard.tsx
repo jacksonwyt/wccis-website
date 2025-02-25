@@ -1,13 +1,12 @@
 // src/components/ui/GlassCard.tsx
 import React from 'react';
 import { cn } from '@/utils/utils';
-import { motion } from 'framer-motion';
 
 interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'hover' | 'active' | 'gradient';
   intensity?: 'light' | 'medium' | 'heavy';
   children: React.ReactNode;
-  isAnimated?: boolean;
+  isAnimated?: boolean; // Kept for backward compatibility but no longer used
 }
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(({
@@ -15,7 +14,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(({
   intensity = 'medium',
   children,
   className,
-  isAnimated = false,
+  isAnimated = false, // Parameter kept but not used
   ...props
 }, ref) => {
   const baseStyles = "relative overflow-hidden backdrop-blur-sm transition-all duration-300";
@@ -33,49 +32,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(({
     gradient: 'bg-gradient-to-br from-white/30 via-white/20 to-white/10 dark:from-gray-900/30 dark:via-gray-900/20 dark:to-gray-900/10'
   };
 
-  const animationProps = isAnimated ? {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 }
-  } : {};
-
-  // Render with motion.div when animated, otherwise regular div
-  if (isAnimated) {
-    return (
-      <motion.div
-        ref={ref}
-        className={cn(
-          baseStyles,
-          intensityStyles[intensity],
-          variantStyles[variant],
-          'border',
-          className
-        )}
-        initial={animationProps.initial}
-        animate={animationProps.animate}
-        transition={animationProps.transition}
-        onClick={props.onClick}
-        onMouseEnter={props.onMouseEnter}
-        onMouseLeave={props.onMouseLeave}
-        style={props.style}
-        id={props.id}
-      >
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent dark:from-gray-900/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-        
-        {/* Content */}
-        <div className="relative z-10">
-          {children}
-        </div>
-  
-        {/* Subtle animated background effect */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-gradient opacity-30" />
-        </div>
-      </motion.div>
-    );
-  }
-
+  // Always use regular div, no animations
   return (
     <div
       ref={ref}
@@ -96,9 +53,9 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(({
         {children}
       </div>
 
-      {/* Subtle animated background effect */}
+      {/* Static background effect (removed animation) */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-gradient opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-30" />
       </div>
     </div>
   );
@@ -116,7 +73,6 @@ export const FeatureGlassCard: React.FC<{
     <GlassCard 
       variant="hover" 
       className="p-6 group border border-white/10"
-      isAnimated
     >
       <div className="mb-4 inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20">
         {icon}
@@ -140,7 +96,6 @@ export const ContentGlassCard: React.FC<{
     <GlassCard 
       variant="gradient" 
       className="overflow-hidden"
-      isAnimated
     >
       <div className="p-6">
         <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">

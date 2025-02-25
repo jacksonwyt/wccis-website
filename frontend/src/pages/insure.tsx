@@ -27,9 +27,9 @@ const InsurePage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900/95 via-gray-900/90 to-gray-900/80" />
           
-          {/* Animated gradient overlay */}
+          {/* Static gradient overlay */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 animate-gradient" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20" />
           </div>
         </div>
         

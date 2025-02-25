@@ -7,6 +7,7 @@ export const useHeaderScroll = () => {
 
 import { ScrollAnimationOptions, AnimationResult } from './types';
 
+// Simplified hook that no longer provides animations
 export const useScrollAnimation = (options: ScrollAnimationOptions = {}): AnimationResult => {
   const { ref, inView } = useInView({
     threshold: options.threshold || 0.1,
@@ -17,14 +18,11 @@ export const useScrollAnimation = (options: ScrollAnimationOptions = {}): Animat
   return { 
     ref, 
     inView, 
-    style: {
-      opacity: inView ? 1 : 0,
-      transform: inView ? 'translateY(0)' : `translateY(${options.distance || 20}px)`,
-      transition: `all ${options.duration || 0.5}s ${options.easing || 'ease'} ${options.delay || 0}s`,
-    }
+    style: {} // No animation styles
   };
 };
 
+// Simplified parallax hook with no effects
 export const useParallax = () => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -48,30 +46,6 @@ export const heroTitle = {
 };
 
 export const heroSubtitle = {
-  initial: {},
-  animate: {},
-  transition: {}
-};
-
-export const heroButtons = {
-  initial: {},
-  animate: {},
-  transition: {}
-};
-
-export const sectionTitle = {
-  initial: {},
-  animate: {},
-  transition: {}
-};
-
-export const stepsAnimation = {
-  initial: {},
-  animate: {},
-  transition: {}
-};
-
-export const formAnimation = {
   initial: {},
   animate: {},
   transition: {}

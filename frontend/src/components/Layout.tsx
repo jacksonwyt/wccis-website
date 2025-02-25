@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({
   pageType = 'home'
 }) => {
   const getAnimationClass = () => {
-    return pageType === 'home' ? 'animate-gradient-xy' : '';
+    return ''; // Removed animations as requested
   };
 
   return (
@@ -85,4 +85,3 @@ const Layout: React.FC<LayoutProps> = ({
 };
 
 export default Layout;
-

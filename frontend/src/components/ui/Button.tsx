@@ -26,11 +26,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = "group relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-1 focus:ring-brand-primary focus:ring-offset-1 isolate";
     
     const variants = {
-      primary: "bg-gradient-to-r from-brand-primary to-brand-dark text-white hover:translate-y-[-1px] hover:brightness-110",
-      secondary: "bg-white text-brand-dark hover:bg-brand-light/50 hover:translate-y-[-1px]",
-      outline: "border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white hover:translate-y-[-1px]",
-      ghost: "text-blue-400 hover:text-blue-300 transition-colors hover:translate-x-1",
-      glass: "backdrop-blur-md bg-white/30 hover:bg-white/40 border border-white/30 text-brand-dark hover:translate-y-[-1px]"
+      primary: "bg-gradient-to-r from-brand-primary to-brand-dark text-white hover:brightness-110",
+      secondary: "bg-white text-brand-dark hover:bg-brand-light/50",
+      outline: "border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white",
+      ghost: "text-blue-400 hover:text-blue-300 transition-colors",
+      glass: "backdrop-blur-md bg-white/30 hover:bg-white/40 border border-white/30 text-brand-dark"
     };
 
     const sizes = {
@@ -53,16 +53,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && (
-          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+          <Loader2 className="w-4 h-4 mr-2" />
         )}
         {!isLoading && leftIcon && (
-          <span className="inline-block mr-2 transition-transform duration-300 group-hover:-translate-x-1" aria-hidden="true">
+          <span className="inline-block mr-2" aria-hidden="true">
             {leftIcon}
           </span>
         )}
         {children}
         {!isLoading && rightIcon && (
-          <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
+          <span className="inline-block ml-2" aria-hidden="true">
             {rightIcon}
           </span>
         )}
