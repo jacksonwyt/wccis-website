@@ -1,5 +1,7 @@
 // frontend/src/hooks/useFormSubmit.ts
 import { useState, useCallback } from 'react';
+import { SubmitHandler } from 'react-hook-form';
+import React from 'react';
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -37,7 +39,12 @@ export function useFormSubmit<TData, TResponse = ApiResponse>({
   const [error, setError] = useState<FormError | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const submit = useCallback(async (data: TData, resetForm?: () => void) => {
+  // This function is compatible with react-hook-form's handleSubmit
+  // We added a type annotation to make it compatible
+  const submit: { 
+    (data: TData): Promise<TResponse | null>;
+    (data: TData, event?: React.FormEvent<HTMLFormElement>): Promise<TResponse | null>;
+  } = useCallback(async (data: TData, _?: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
     setError(null);
     setIsSuccess(false);
@@ -77,8 +84,8 @@ export function useFormSubmit<TData, TResponse = ApiResponse>({
       
       setIsSuccess(true);
       
-      if (clearFormAfterSuccess && resetForm) {
-        resetForm();
+      if (clearFormAfterSuccess) {
+        _?.preventDefault();
       }
       
       onSuccess?.(response);
