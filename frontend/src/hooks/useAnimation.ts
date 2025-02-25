@@ -18,7 +18,11 @@ export const useScrollAnimation = (options: ScrollAnimationOptions = {}): Animat
   return { 
     ref, 
     inView, 
-    style: {} // No animation styles
+    style: {
+      opacity: 1,
+      transform: 'none',
+      transition: 'none'
+    } // Provide required properties with neutral values
   };
 };
 
