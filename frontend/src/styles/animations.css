@@ -1,0 +1,187 @@
+/* Base animations.css */
+
+/* Image glow effect for hero images */
+.animate-image-glow {
+  animation: image-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes image-glow {
+  0% {
+    filter: brightness(1) saturate(1);
+  }
+  100% {
+    filter: brightness(1.1) saturate(1.1);
+  }
+}
+
+/* Pulsing effect for hero section gradient overlays */
+.animate-hero-pulse {
+  animation: hero-pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes hero-pulse {
+  0% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+/* Moving gradient background for sections */
+.animate-gradient-xy {
+  animation: gradient-xy 15s ease infinite;
+  background-size: 400% 400%;
+}
+
+@keyframes gradient-xy {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* Blob animation for form backgrounds */
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Animation delay helpers */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+
+
+/* Slide-in animations */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade-in animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale animations */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scale-out {
+  from {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations with classes */
+.animate-fade-in {
+  animation: fade-in 0.6s ease forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease forwards;
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.6s ease forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.6s ease forwards;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.6s ease forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.6s ease forwards;
+}
+
+.animate-scale-out {
+  animation: scale-out 0.6s ease forwards;
+}
+
+

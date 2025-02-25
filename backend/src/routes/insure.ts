@@ -1,9 +1,16 @@
 // backend/src/routes/insure.ts
 import { Router } from 'express';
-import { submitInsureRequest } from '../controllers/insureController';
+import {
+  submitWorkersCompQuote,
+  submitCommercialAutoQuote,
+  submitGeneralLiabilityQuote
+} from '../controllers/insureController';
 
 const router = Router();
 
-router.post('/', submitInsureRequest);
+// Routes for different insurance types
+router.post('/workers-comp', submitWorkersCompQuote);
+router.post('/commercial-auto', submitCommercialAutoQuote);
+router.post('/general-liability', submitGeneralLiabilityQuote);
 
 export default router;

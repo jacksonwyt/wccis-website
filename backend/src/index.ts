@@ -1,9 +1,10 @@
 // backend/src/index.ts
+// backend/src/index.ts
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
-import { configureSecurityMiddleware, sanitizeInputs } from './middleware/security';
+import { configureSecurityMiddleware } from './middleware/security';
 
 // Load environment variables
 dotenv.config();
@@ -14,16 +15,23 @@ import insureRoutes from './routes/insure';
 import blogRoutes from './routes/blog';
 import contactRoutes from './routes/contact';
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({
+// Enhanced CORS configuration
+const corsOptions = {
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-XSRF-TOKEN'],
+  exposedHeaders: ['X-XSRF-TOKEN'],
+  maxAge: 86400,
+};
+
+// Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(sanitizeInputs);
 
 // Configure security middleware
 configureSecurityMiddleware(app);

@@ -18,7 +18,7 @@ const alertStyles: Record<AlertType, string> = {
 };
 
 export const Alert: React.FC<AlertProps> = ({ type, message, onClose, className = "" }) => (
-  <div className={`p-4 rounded-lg border ${alertStyles[type]} relative ${className}`}>
+  <div className={`p-4 border ${alertStyles[type]} relative ${className}`}>
     <p>{message}</p>
     {onClose && (
       <button onClick={onClose} className="absolute top-4 right-4 hover:opacity-75" aria-label="Close alert">

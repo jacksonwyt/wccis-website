@@ -1,17 +1,17 @@
-// backend/src/middleware/validate.ts
+// src/middleware/validate.ts
 import { Request, Response, NextFunction } from 'express';
+import { AnyZodObject, ZodError } from 'zod';
 import { AppError } from '../types/errors';
 
-export const validateRequest = (schema: any) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const validate = (schema: AnyZodObject) => 
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { error } = schema.validate(req.body);
-      if (error) {
-        throw new AppError(400, 'error', error.details[0].message);
+      await schema.parseAsync(req.body);
+      return next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return next(AppError.validation(error.errors));
       }
-      next();
-    } catch (err) {
-      next(err);
+      return next(error);
     }
   };
-};

@@ -1,6 +1,7 @@
 // backend/src/middleware/errorHandler.ts
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../types/errors';
+import { logger } from '../utils/logger';
 
 export const errorHandler = (
   err: Error | AppError,

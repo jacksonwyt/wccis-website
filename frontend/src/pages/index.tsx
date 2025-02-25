@@ -1,41 +1,143 @@
 // frontend/src/pages/index.tsx
 import React from "react";
 import { useRouter } from "next/router";
+
 import Layout from "@/components/Layout";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { Shield, Scale, ThumbsUp } from "lucide-react";
+import { ArrowRight, Shield, Scale, ThumbsUp, ChevronRight } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
 
 const HomePage = () => {
   const router = useRouter();
+
+
   return (
-    <Layout title="WCCIS - Independent Insurance Agency for Contractors">
+    <Layout title="WCCIS - Independent Insurance Agency for Contractors" pageType="home">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center">
+      <section className="relative min-h-[90vh] flex items-center" id="hero-section">
         <div className="absolute inset-0">
           <Image
             src="/images/hero/sunset-skyline.jpg"
-            alt="San Diego Skyline"
-            layout="fill"
-            className="object-cover object-center"
+            alt="City skyline at sunset"
+            fill
+            className="object-cover animate-image-glow"
             priority
+            quality={90}
+            sizes="100vw"
           />
-          <div className="absolute inset-0 bg-futuristic-surface/80" />
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent animate-hero-pulse" />
+          </div>
         </div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl font-bold text-futuristic-light mb-6">
-              Your Independent Agent for Contractor Insurance
-            </h1>
-            <p className="text-xl mb-8 text-futuristic-light">
-              We compare rates from multiple carriers to find you the best coverage at competitive prices.
+
+        <div className="relative container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="space-y-8">
+              <div className="space-y-2">
+                <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.1s_forwards]">
+                  The Independent Contractor's
+                </h1>
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.3s_forwards]">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-white-700 via-blue-400 to-white-200">
+                    Insurance Agency on the West Coast
+                  </span>
+                </h1>
+              </div>
+              <p className="text-xl text-gray-200 leading-relaxed max-w-2xl text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.5s_forwards]">
+                Same day free insurance quotes with access by phone, email, and texts.
+                Expert service you can trust.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* Insurance Types - Inspired by Stripe's card layout */}
+      <section className="py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-500/10 to-blue-400/10 animate-gradient-xy" style={{ animationDelay: '-2s' }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-gray-900" />
+        </div>
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Comprehensive Coverage Options
+            </h2>
+            <p className="text-gray-300 text-lg">
+              Choose from our range of insurance products designed specifically for contractors
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button onClick={() => router.push(ROUTES.INSURE)} variant="primary" className="px-8 py-4 text-lg">
-                Get Your Quote
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {[
+              {
+                title: "General Liability",
+                description: "Essential coverage for third-party claims and property damage",
+                route: ROUTES.INSURANCE.GENERAL_LIABILITY,
+                icon: Shield,
+              },
+              {
+                title: "Workers Compensation",
+                description: "Protect your employees and comply with state requirements",
+                route: ROUTES.INSURANCE.WORKERS_COMP,
+                icon: Scale,
+              },
+              {
+                title: "Commercial Auto",
+                description: "Coverage for your business vehicles and equipment",
+                route: ROUTES.INSURANCE.COMMERCIAL_AUTO,
+                icon: ThumbsUp,
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="group relative overflow-hidden bg-gradient-to-r from-white/5 to-white/[0.02] p-8 hover:from-white/10 hover:to-white/[0.05] transition-all duration-200 border border-white/10"
+              >
+                <div className="relative z-10">
+                  <div className="mb-4 inline-block bg-gradient-to-br from-blue-500/30 to-blue-700/30 p-3">
+                    <item.icon className="h-6 w-6 text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
+                  <p className="text-gray-300 mb-6">{item.description}</p>
+                  <Button
+  variant="ghost"
+  onClick={() => router.push(item.route)}
+  rightIcon={<ChevronRight className="w-4 h-4" />}
+  className="text-blue-400 hover:text-blue-300 p-0"
+>
+  Learn More
+</Button>
+                </div>
+
+                {/* Decorative gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-blue-600/10 to-blue-700/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
+            ))}
+          </div>
+
+          {/* Call to Action Buttons */}
+          <div className="flex flex-col items-center justify-center mt-16">
+            <div className="flex justify-center gap-6">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => router.push(ROUTES.INSURE)}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+                className="transition-transform duration-200 hover:translate-x-1 text-lg px-8 py-6"
+              >
+                Get Your Free Quote Today
               </Button>
-              <Button onClick={() => router.push(ROUTES.CONTACT)} variant="secondary" className="px-8 py-4 text-lg">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => router.push(ROUTES.CONTACT)}
+                className="text-white border-white/30 hover:bg-white/10 transition-transform duration-200 hover:translate-x-1 text-lg px-8 py-6"
+              >
                 Speak with an Agent
               </Button>
             </div>
@@ -43,55 +145,95 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 bg-futuristic-light">
+      {/* Features Section - Inspired by Frame.io's clean layout */}
+      <section className="py-24 bg-gradient-to-b from-gray-900 to-black">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex items-start gap-4">
-              <Shield className="w-12 h-12 text-futuristic-accent" />
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-futuristic-surface">Multiple Carriers</h3>
-                <p className="text-futuristic-surface/70">
-                  We work with top-rated insurance companies to find you the best rates.
-                </p>
-              </div>
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                Why Choose WCCIS?
+              </h2>
+              <p className="text-gray-300 text-lg mb-8">
+                Your time is valuable. Get expert, quick answers to your insurance questions by speaking directly with us.
+                No third party services, no waiting for hours to get answers.
+              </p>
+              <ul className="space-y-6">
+                {[
+                  {
+                    title: "96% Client Retention",
+                    description: "Over 25 years of serving contractors of all sizes",
+                    icon: Shield,
+                  },
+                  {
+                    title: "Direct Access",
+                    description: "Speak directly with your agent - no middleman",
+                    icon: Scale,
+                  },
+                  {
+                    title: "Same Day Service",
+                    description: "Quick quotes and fast service",
+                    icon: ThumbsUp,
+                  },
+                ].map((feature) => (
+                  <li 
+                    key={feature.title}
+                    className="flex items-start gap-4 p-4 bg-white/5 hover:bg-white/[0.07] transition-colors border border-white/10"
+                  >
+                    <div className="p-2 bg-gradient-to-br from-blue-500/30 to-blue-700/30">
+                      <feature.icon className="h-5 w-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-medium mb-1">{feature.title}</h3>
+                      <p className="text-gray-300">{feature.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="flex items-start gap-4">
-              <Scale className="w-12 h-12 text-futuristic-accent" />
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-futuristic-surface">Compare Options</h3>
-                <p className="text-futuristic-surface/70">
-                  Get quotes from multiple insurers with one simple application.
-                </p>
+            <div className="relative">
+              <div className="aspect-square overflow-hidden">
+                <Image
+                  src="/images/sections/california-street.jpg"
+                  alt="Construction site"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <ThumbsUp className="w-12 h-12 text-futuristic-accent" />
-              <div>
-                <h3 className="text-xl font-semibold mb-2 text-futuristic-surface">Expert Guidance</h3>
-                <p className="text-futuristic-surface/70">
-                  Specializing in contractor insurance for over 15 years.
-                </p>
-              </div>
+              {/* Decorative elements */}
+              <div className="absolute -inset-4 -z-10 bg-gradient-to-r from-blue-500/20 via-blue-600/20 to-blue-700/20 blur-2xl opacity-50" />
             </div>
           </div>
+
+
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-futuristic-surface py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6 text-futuristic-light">Ready to Find Better Coverage?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-futuristic-light/80">
-            Let us shop multiple carriers to find you the best coverage at competitive rates.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button onClick={() => router.push(ROUTES.INSURE)} variant="primary" className="px-8 py-4 text-lg">
-              Get Your Quote Here!
-            </Button>
-            <Button onClick={() => router.push(ROUTES.CONTACT)} variant="secondary" className="px-8 py-4 text-lg">
-              Speak with an Agent
-            </Button>
+      {/* CTA Section - Inspired by Stripe's gradient call-to-action */}
+      <section className="py-24 relative overflow-hidden bg-gray-900">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-400/20 animate-gradient-xy" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-blue-300/10 animate-gradient-xy" style={{ animationDelay: '-3s' }} />
+          <div className="absolute inset-0 bg-gray-900/90" />
+        </div>
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Ready to Get Started?
+            </h2>
+            <p className="text-gray-200 text-lg mb-8">
+              As an independent agent, I can better match your needs with the right company to save you money.
+              The finest compliment I can receive is a referral from you! Thank you for your trust.
+            </p>
+            <Button
+  variant="primary"
+  size="lg"
+  onClick={() => router.push(ROUTES.INSURE)}
+  rightIcon={<ArrowRight className="w-5 h-5" />}
+>
+  Get Your Quote Now
+</Button>
           </div>
         </div>
       </section>

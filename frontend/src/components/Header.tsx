@@ -4,145 +4,283 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { NAVIGATION_ITEMS, ROUTES } from "@/utils/routes";
 import { Button } from "@/components/ui/Button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Shield, Phone, ArrowRight } from "lucide-react";
 import Logo from "./Logo";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
-  const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isScrollingUp, setIsScrollingUp] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const router = useRouter();
 
-  const insuranceTypes = [
-    { label: "General Liability", path: ROUTES.INSURANCE.GENERAL_LIABILITY },
-    { label: "Workers Compensation", path: ROUTES.INSURANCE.WORKERS_COMP },
-    { label: "Commercial Auto", path: ROUTES.INSURANCE.COMMERCIAL_AUTO },
-  ];
-
+  // Handle scroll behavior
   useEffect(() => {
-    setMounted(true);
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isDropdownOpen && !(event.target as Element).closest(".insurance-dropdown")) {
-        setIsDropdownOpen(false);
-      }
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 10);
+      setIsScrollingUp(currentScrollY < lastScrollY || currentScrollY <= 0);
+      setLastScrollY(currentScrollY);
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [isDropdownOpen]);
 
-  if (!mounted) return null;
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
-  const isActive = (path: string) => router.pathname === path;
+  const insuranceTypes = [
+    {
+      label: "General Liability",
+      path: ROUTES.INSURANCE.GENERAL_LIABILITY,
+      description: "Essential coverage for third-party claims",
+      icon: Shield
+    },
+    {
+      label: "Workers Compensation",
+      path: ROUTES.INSURANCE.WORKERS_COMP,
+      description: "Protect your employees and business",
+      icon: Shield
+    },
+    {
+      label: "Commercial Auto",
+      path: ROUTES.INSURANCE.COMMERCIAL_AUTO,
+      description: "Coverage for your business vehicles",
+      icon: Shield
+    }
+  ];
 
   return (
     <header
-      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-futuristic-surface shadow-lg"
-          : "bg-futuristic-surface/80 backdrop-blur-lg"
-      }`}
+      className={cn(
+        "fixed w-full z-50 transition-all duration-300 transform",
+        isScrolled ? "backdrop-blur-xl bg-black/80" : "bg-transparent",
+        isScrollingUp ? "" : "translate-y-[-100%]",
+        "border-b border-white/[0.05]"
+      )}
+      style={{
+        height: isScrolled ? "64px" : "80px",
+        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)"
+      }}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-20">
-          <Logo />
-          <nav className="hidden lg:flex items-center space-x-8">
-            <div className="relative insurance-dropdown">
+      <nav className="max-w-[1400px] h-full mx-auto px-6">
+        <div className="flex items-center justify-between h-full">
+          {/* Logo - scales down on scroll */}
+          <div className={cn(
+            "transition-all duration-300",
+            isScrolled ? "scale-90" : "scale-100"
+          )}>
+            <Logo />
+          </div>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-1">
+            <div 
+              className="relative group"
+              onMouseEnter={() => setActiveDropdown('insurance')}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsDropdownOpen(!isDropdownOpen);
-                }}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-futuristic-light hover:text-futuristic-accent transition-colors"
+                className="flex items-center px-4 py-2 text-sm font-medium text-gray-200 
+                         hover:text-white transition-colors hover:bg-white/[0.05] border-b border-transparent hover:border-white/[0.1]"
               >
-                Insurance Types
-                <ChevronDown
-                  className={`ml-1 w-4 h-4 transition-transform ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
+                Insurance
+                <ChevronDown 
+                  className={cn(
+                    "ml-1 w-4 h-4 transition-transform duration-300",
+                    activeDropdown === 'insurance' ? "rotate-180" : ""
+                  )} 
                 />
               </button>
-              {isDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-64 bg-futuristic-surface rounded-md shadow-lg py-1">
-                  {insuranceTypes.map((item) => (
-                    <Link key={item.path} href={item.path}>
-                      <a className="block px-4 py-2 text-sm text-futuristic-light hover:bg-futuristic-accent hover:text-white">
-                        {item.label}
-                      </a>
-                    </Link>
-                  ))}
+              
+              {/* Enhanced Dropdown Menu */}
+              <div 
+                className={cn(
+                  "absolute top-full left-0 w-screen max-w-2xl pt-2 transition-all duration-200",
+                  activeDropdown === 'insurance' 
+                    ? "opacity-100 translate-y-0" 
+                    : "opacity-0 translate-y-2 pointer-events-none"
+                )}
+              >
+                <div className="bg-white/[0.07] border border-white/[0.1] p-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    {insuranceTypes.map((item) => (
+                      <Link
+                        key={item.path}
+                        href={item.path}
+                        className="group flex flex-col p-4 hover:bg-white/[0.05] transition-all duration-300"
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+                            <item.icon className="w-5 h-5 text-blue-400" />
+                          </div>
+                          <span className="font-medium text-white 
+                                       group-hover:text-blue-400 transition-colors">
+                            {item.label}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-300 
+                                  group-hover:text-gray-200 transition-colors">
+                          {item.description}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                  
+                  {/* Quote CTA in Dropdown */}
+                  <div className="mt-6 p-4 border-t border-white/[0.1]">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-5 h-5 text-blue-400" />
+                        <div>
+                          <p className="text-sm font-medium text-white">Need help choosing?</p>
+                          <p className="text-sm text-gray-300">Talk to an expert</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        className="text-blue-400 hover:text-blue-300"
+                        onClick={() => router.push(ROUTES.CONTACT)}
+                      >
+                        Contact Us
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
+
+            {/* Main Navigation Items */}
             {NAVIGATION_ITEMS.map((item) => (
-              <Link key={item.path} href={item.path}>
-                <a
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(item.path)
-                      ? "text-futuristic-accent"
-                      : "text-futuristic-light hover:text-futuristic-accent"
-                  }`}
-                >
-                  {item.label}
-                </a>
+              <Link
+                key={item.path}
+                href={item.path}
+                className={cn(
+                  "px-4 py-2 text-sm font-medium transition-all duration-300",
+                  router.pathname === item.path
+                    ? "text-white bg-white/[0.05]"
+                    : "text-gray-200 hover:text-white hover:bg-white/[0.05]"
+                )}
+              >
+                {item.label}
               </Link>
             ))}
-          </nav>
-          <div className="hidden lg:block">
+          </div>
+
+          {/* Action Buttons */}
+          <div className="hidden lg:flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              className="text-sm font-medium text-gray-200 hover:text-white 
+                       hover:bg-white/[0.05] transition-colors"
+              onClick={() => router.push(ROUTES.CONTACT)}
+            >
+              Contact Us
+            </Button>
             <Button
               onClick={() => router.push(ROUTES.INSURE)}
-              variant="primary"
-              className="px-6"
+              className="bg-white text-black hover:bg-gray-100 
+                       px-6 py-2.5 group transition-all duration-300"
             >
-              Get a Quote
+              Get Quote
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 
+                                 transition-transform" />
             </Button>
           </div>
+
+          {/* Mobile Menu Button */}
           <button
-            className="lg:hidden rounded-md p-2 text-futuristic-light hover:text-futuristic-accent transition-colors"
+            className="lg:hidden p-2 text-gray-200 hover:text-white 
+                     hover:bg-white/[0.05] transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 space-y-2">
-            {NAVIGATION_ITEMS.map((item) => (
-              <Link key={item.path} href={item.path}>
-                <a
-                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(item.path)
-                      ? "bg-futuristic-accent text-white"
-                      : "text-futuristic-light hover:bg-futuristic-accent"
-                  }`}
+
+        {/* Mobile Menu */}
+        <div 
+          className={cn(
+            "lg:hidden fixed inset-x-0 top-[64px] bg-black/90 backdrop-blur-xl border-t border-white/[0.1]",
+            "transition-all duration-300 transform",
+            isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          )}
+        >
+          <div className="max-h-[calc(100vh-64px)] overflow-y-auto px-6 py-8 space-y-6">
+            {/* Insurance Links */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-gray-300 px-4">Insurance</h3>
+              {insuranceTypes.map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className="flex items-center px-4 py-3 text-gray-200 hover:text-white 
+                           hover:bg-white/[0.05] rounded-lg group"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <item.icon className="w-5 h-5 mr-3 text-blue-400 
+                                    group-hover:text-blue-300 transition-colors" />
+                  <div>
+                    <div className="font-medium">{item.label}</div>
+                    <div className="text-sm text-gray-300 group-hover:text-gray-200">
+                      {item.description}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Navigation Items */}
+            <div className="space-y-2">
+              {NAVIGATION_ITEMS.map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={cn(
+                    "block px-4 py-3 rounded-lg transition-colors",
+                    router.pathname === item.path
+                      ? "text-white bg-white/[0.05]"
+                      : "text-gray-200 hover:text-white hover:bg-white/[0.05]"
+                  )}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
-                </a>
-              </Link>
-            ))}
-            <div className="px-3 pt-4">
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile Action Buttons */}
+            <div className="space-y-3 pt-4">
               <Button
+                variant="ghost"
+                className="w-full justify-center text-gray-200"
+                onClick={() => {
+                  router.push(ROUTES.CONTACT);
+                  setIsMenuOpen(false);
+                }}
+              >
+                Contact Us
+              </Button>
+              <Button
+                className="w-full justify-center bg-white text-black hover:bg-gray-100"
                 onClick={() => {
                   router.push(ROUTES.INSURE);
                   setIsMenuOpen(false);
                 }}
-                variant="primary"
-                className="w-full"
               >
-                Get a Quote
+                Get Quote
+                <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      </nav>
     </header>
   );
 };

@@ -54,11 +54,6 @@ export const submitQuoteRequest = async <T>(data: T): Promise<ApiResponse> => {
   return response.data;
 };
 
-export const submitCertificateRequest = async <T>(data: T): Promise<ApiResponse> => {
-  const response = await apiClient.post('/certificate', data);
-  return response.data;
-};
-
 export const submitContactForm = async <T>(data: T): Promise<ApiResponse> => {
   const response = await apiClient.post('/contact', data);
   return response.data;

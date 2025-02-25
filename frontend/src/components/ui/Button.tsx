@@ -1,32 +1,74 @@
 // frontend/src/components/ui/Button.tsx
-import React from "react";
-import { cn } from "../lib/utils";
+import React from 'react';
+import { cn } from '@/utils/utils';
+import { Loader2 } from 'lucide-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'glass';
+  size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
-  variant?: 'primary' | 'secondary';
-  className?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  isLoading,
-  variant = 'primary',
-  className = '',
-  ...props
-}) => {
-  const baseStyles = "px-4 py-2 rounded-lg font-medium transition-colors duration-200";
-  const variantStyles = variant === 'primary' 
-    ? "bg-futuristic-accent text-white hover:bg-futuristic-accent/90"
-    : "bg-futuristic-surface text-futuristic-light hover:bg-futuristic-surface/90";
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ 
+    className, 
+    variant = 'primary',
+    size = 'md',
+    isLoading = false,
+    leftIcon,
+    rightIcon,
+    children,
+    disabled,
+    ...props 
+  }, ref) => {
+    const baseStyles = "group relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-1 focus:ring-brand-primary focus:ring-offset-1 isolate";
+    
+    const variants = {
+      primary: "bg-gradient-to-r from-brand-primary to-brand-dark text-white hover:translate-y-[-1px] hover:brightness-110",
+      secondary: "bg-white text-brand-dark hover:bg-brand-light/50 hover:translate-y-[-1px]",
+      outline: "border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white hover:translate-y-[-1px]",
+      ghost: "text-blue-400 hover:text-blue-300 transition-colors hover:translate-x-1",
+      glass: "backdrop-blur-md bg-white/30 hover:bg-white/40 border border-white/30 text-brand-dark hover:translate-y-[-1px]"
+    };
 
-  return (
-    <button 
-      className={`${baseStyles} ${variantStyles} ${className} ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-      disabled={isLoading}
-      {...props}
-    >
-      {isLoading ? 'Loading...' : children}
-    </button>
-  );
-};
+    const sizes = {
+      sm: "px-4 py-2 text-sm gap-2",
+      md: "px-6 py-3 text-base gap-3",
+      lg: "px-8 py-4 text-lg gap-3"
+    };
+
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          baseStyles,
+          variants[variant],
+          sizes[size as 'sm' | 'md' | 'lg'],
+          (disabled || isLoading) ? "opacity-50 cursor-not-allowed" : "",
+          className || ""
+        )}
+        disabled={disabled || isLoading}
+        {...props}
+      >
+        {isLoading && (
+          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+        )}
+        {!isLoading && leftIcon && (
+          <span className="inline-block mr-2 transition-transform duration-300 group-hover:-translate-x-1" aria-hidden="true">
+            {leftIcon}
+          </span>
+        )}
+        {children}
+        {!isLoading && rightIcon && (
+          <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
+            {rightIcon}
+          </span>
+        )}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';

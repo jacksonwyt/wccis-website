@@ -1,53 +1,57 @@
 // backend/src/controllers/blogController.ts
 import { Request, Response } from 'express';
 import { asyncHandler } from './baseController';
+import { AppError } from '../types/errors';
 
-// Get all blog posts
+// Get all blog posts (with optional filtering/pagination)
 export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
-  // TODO: Implement database query to fetch posts
-  // For now, returning mock data
-  const posts = [
-    {
-      id: '1',
-      title: 'Understanding General Liability Insurance',
-      content: 'Content here...',
-      // ... other fields
-    }
+  // Placeholder data
+  const blogPosts = [
+    { id: 1, title: 'Understanding Workers Compensation Insurance', slug: 'understanding-workers-comp' },
+    { id: 2, title: 'Five Tips to Lower Your Commercial Auto Premiums', slug: 'lower-commercial-auto-premiums' },
+    { id: 3, title: 'General Liability Insurance: What Contractors Need to Know', slug: 'contractors-liability-insurance' },
   ];
 
   res.status(200).json({
     status: 'success',
-    data: posts
+    results: blogPosts.length,
+    data: {
+      posts: blogPosts
+    }
   });
 });
 
-// Get single blog post
-export const getPost = asyncHandler(async (req: Request, res: Response) => {
-  const { slug } = req.params;
-  
-  // TODO: Implement database query to fetch single post
-  // For now, returning mock data
+// Get a single blog post by slug
+export const getPostBySlug = asyncHandler(async (req: Request, res: Response) => {
+  const { _slug } = req.params;
+
+  // Placeholder data
   const post = {
-    id: '1',
-    title: 'Understanding General Liability Insurance',
-    content: 'Content here...',
-    // ... other fields
+    id: 1, 
+    title: 'Understanding Workers Compensation Insurance', 
+    slug: 'understanding-workers-comp',
+    content: 'This is a placeholder for the full blog post content.',
+    author: 'Insurance Expert',
+    date: '2023-05-15',
+    tags: ['workers comp', 'insurance', 'compliance']
   };
 
   res.status(200).json({
     status: 'success',
-    data: post
+    data: {
+      post
+    }
   });
 });
 
-// Subscribe to newsletter
-export const subscribeNewsletter = asyncHandler(async (req: Request, res: Response) => {
-  const { email } = req.body;
+// Subscribe to blog updates
+export const subscribeToUpdates = asyncHandler(async (req: Request, res: Response) => {
+  const { _email } = req.body;
 
-  // TODO: Implement newsletter subscription logic
-  // For now, just returning success response
   res.status(200).json({
     status: 'success',
-    message: 'Successfully subscribed to newsletter'
+    data: {
+      message: 'Successfully subscribed to blog updates'
+    }
   });
 });

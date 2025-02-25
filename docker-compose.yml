@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wccis-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.wccis.com/api
+      - NEXT_PUBLIC_SITE_URL=https://wccis.com
+    networks:
+      - wccis-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wccis-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - FRONTEND_URL=https://wccis.com
+      # Add other environment variables here or use env_file
+    env_file:
+      - ./backend/.env.production
+    networks:
+      - wccis-network
+
+networks:
+  wccis-network:
+    driver: bridge 

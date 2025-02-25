@@ -1,25 +1,22 @@
-// backend/src/middleware/security.ts
+// src/middleware/security.ts
+import { doubleCsrf } from 'csrf-csrf';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
-import csrf from 'csurf';
 import { Express } from 'express';
-import { cleanseInput } from '../utils/security';
 
-// Rate limiting middleware
-export const rateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+const {
+  generateToken,
+  doubleCsrfProtection
+} = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET || 'your-secret-key',
+  cookieName: 'csrf-token',
+  cookieOptions: {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production'
+  }
 });
 
-// Form submission specific rate limiter
-export const formRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // limit each IP to 10 form submissions per hour
-  message: 'Too many form submissions, please try again later.'
-});
-
-// Configure security middleware
 export const configureSecurityMiddleware = (app: Express) => {
   // Basic security headers
   app.use(helmet());
@@ -40,31 +37,33 @@ export const configureSecurityMiddleware = (app: Express) => {
       },
     })
   );
+  
+  // Rate limiting
+  app.use(rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+  }));
 
-  // Enable CSRF protection
-  app.use(csrf({ cookie: true }));
+  // Form submission rate limiter
+  const formLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10 // limit each IP to 10 form submissions per hour
+  });
 
-  // Add CSRF token to all responses
+  // Apply form rate limiting to specific routes
+  app.use(['/api/contact', '/api/insure'], formLimiter);
+
+  // CSRF Protection
+  app.use(doubleCsrfProtection);
+
+  // Add CSRF token to response
   app.use((req, res, next) => {
-    res.cookie('XSRF-TOKEN', req.csrfToken());
+    res.cookie('XSRF-TOKEN', generateToken(req, res), {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
     next();
   });
 
-  // Global rate limiter
-  app.use(rateLimiter);
-
-  // Form submission rate limiter
-  app.use(['/api/contact', '/api/insure', '/api/certificate'], formRateLimiter);
-};
-
-// Input sanitization middleware
-export const sanitizeInputs = (req: any, res: any, next: any) => {
-  if (req.body) {
-    for (let key in req.body) {
-      if (typeof req.body[key] === 'string') {
-        req.body[key] = cleanseInput(req.body[key]);
-      }
-    }
-  }
-  next();
+  return { formLimiter };
 };

@@ -1,173 +1,147 @@
-// frontend/components/Footer.tsx
-import React from "react";
+// src/components/Footer.tsx
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ROUTES } from "../utils/routes";
-import { Phone, Mail, MapPin, Facebook, Twitter, Linkedin } from "lucide-react";
+import { ROUTES } from "@/utils/routes";
+import { Phone, Mail, MapPin } from "lucide-react";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const checkScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        setIsVisible(true);
+      }
+    };
+
+    checkScroll(); // Check on mount
+    window.addEventListener("scroll", checkScroll);
+    return () => window.removeEventListener("scroll", checkScroll);
+  }, []);
+
   return (
-    <footer className="bg-futuristic-surface text-futuristic-light">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
+    <footer
+      className={`relative border-t border-gray-200/20 bg-gradient-to-b from-gray-900 to-gray-800 text-white ${isVisible ? "visible" : ""}`}
+    >
+      <div className="container mx-auto px-4 py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+          {/* Company Info Card */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white">WCCIS</h3>
-            <p className="text-sm">
-              Your trusted independent insurance agency for contractors since
-              1995.
+            <h3 className="text-lg font-semibold text-white">WCCIS</h3>
+            <p className="text-gray-300">
+              Your trusted independent insurance agency for contractors since 1995.
             </p>
             <div className="space-y-2">
-              <a
+              <Link
                 href="tel:+18001234567"
-                className="flex items-center hover:text-white transition-colors"
+                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
               >
                 <Phone className="w-4 h-4 mr-2" />
                 (800) 123-4567
-              </a>
-              <a
-                href="mailto:info@wccis.com"
-                className="flex items-center hover:text-white transition-colors"
+              </Link>
+              <Link
+                href="mailto:customerservice@wccis.com"
+                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
               >
                 <Mail className="w-4 h-4 mr-2" />
-                info@wccis.com
-              </a>
-              <div className="flex items-start">
+                customerservice@wccis.com
+              </Link>
+              <div className="flex items-start text-gray-300">
                 <MapPin className="w-4 h-4 mr-2 mt-1" />
                 <span>
-                  123 Insurance Ave,
+                  14781 Pomerado Rd,
                   <br />
-                  Suite 100
+                  Suite 215
                   <br />
-                  City, ST 12345
+                  Poway, CA 92064
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Insurance Links */}
-          <div>
-            <h3 className="text-lg font-bold text-white mb-4">Insurance</h3>
+          {/* Insurance Links Card */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white mb-4">Insurance</h3>
             <ul className="space-y-2">
               <li>
-                <Link href={ROUTES.INSURANCE.GENERAL_LIABILITY}>
-                  <a className="hover:text-white transition-colors">
-                    General Liability
-                  </a>
+                <Link
+                  href={ROUTES.INSURANCE.GENERAL_LIABILITY}
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  General Liability
                 </Link>
               </li>
               <li>
-                <Link href={ROUTES.INSURANCE.WORKERS_COMP}>
-                  <a className="hover:text-white transition-colors">
-                    Workers Compensation
-                  </a>
+                <Link
+                  href={ROUTES.INSURANCE.WORKERS_COMP}
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  Workers Compensation
                 </Link>
               </li>
               <li>
-                <Link href={ROUTES.INSURANCE.COMMERCIAL_AUTO}>
-                  <a className="hover:text-white transition-colors">
-                    Commercial Auto
-                  </a>
+                <Link
+                  href={ROUTES.INSURANCE.COMMERCIAL_AUTO}
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  Commercial Auto
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Resources */}
-          <div>
-            <h3 className="text-lg font-bold text-white mb-4">Resources</h3>
+          {/* Quick Links Card */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href={ROUTES.BLOG}>
-                  <a className="hover:text-white transition-colors">
-                    Insurance Blog
-                  </a>
+                <Link
+                  href={ROUTES.ABOUT}
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  About Us
                 </Link>
               </li>
               <li>
-                <Link href="/faq">
-                  <a className="hover:text-white transition-colors">FAQ</a>
+                <Link
+                  href={ROUTES.CONTACT}
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  Contact
                 </Link>
               </li>
               <li>
-                <Link href="/claims">
-                  <a className="hover:text-white transition-colors">
-                    Claims Process
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/glossary">
-                  <a className="hover:text-white transition-colors">
-                    Insurance Glossary
-                  </a>
+                <Link
+                  href={ROUTES.BLOG}
+                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  Blog
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Partner Carriers */}
-          <div>
-            <h3 className="text-lg font-bold text-white mb-4">
-              Partner Carriers
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/10 rounded p-2 text-center text-sm">
-                Hartford
-              </div>
-              <div className="bg-white/10 rounded p-2 text-center text-sm">
-                Travelers
-              </div>
-              <div className="bg-white/10 rounded p-2 text-center text-sm">
-                Liberty Mutual
-              </div>
-              <div className="bg-white/10 rounded p-2 text-center text-sm">
-                CNA
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-futuristic-accent">
+        <div className="mt-12 border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-sm">
-              © {currentYear} WCCIS. All rights reserved. CA License #0123456
+            <div className="text-sm text-gray-400">
+              © {new Date().getFullYear()} WCCIS. All rights reserved. CA License #0123456
             </div>
             <div className="flex items-center space-x-6">
-              <Link href="/privacy">
-                <a className="text-sm hover:text-white transition-colors">
-                  Privacy Policy
-                </a>
+              <Link
+                href="/privacy"
+                className="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+              >
+                Privacy Policy
               </Link>
-              <Link href="/terms">
-                <a className="text-sm hover:text-white transition-colors">
-                  Terms of Service
-                </a>
+              <Link
+                href="/terms"
+                className="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+              >
+                Terms of Service
               </Link>
-              <div className="flex items-center space-x-4">
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                  aria-label="Visit our Facebook page"
-                >
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                  aria-label="Visit our Twitter page"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                  aria-label="Visit our LinkedIn page"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -177,5 +151,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-  

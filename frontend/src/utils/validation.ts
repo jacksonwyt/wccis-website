@@ -4,7 +4,6 @@ import * as z from 'zod';
 // Common patterns
 const PHONE_REGEX = /^[0-9-+()\s]{10,}$/;
 const NAME_MIN_LENGTH = 2;
-const MESSAGE_MIN_LENGTH = 10;
 
 // Insurance Quote Form Schema
 export const insuranceQuoteSchema = z.object({
@@ -17,19 +16,7 @@ export const insuranceQuoteSchema = z.object({
     .regex(PHONE_REGEX, 'Please enter a valid phone number')
 });
 
-// Certificate Request Form Schema
-export const certificateRequestSchema = z.object({
-    requestType: z.enum(['standard', 'additional-insured', 'waiver', 'primary']),
-    isRush: z.boolean(),
-    policyHolder: z.string().min(2, 'Policy holder name is required'),
-    carrier: z.string().min(1, 'Please select an insurance carrier'),
-    policyNumber: z.string().min(3, 'Valid policy number is required'),
-    certificateHolder: z.string().min(2, 'Certificate holder is required'),
-    specialInstructions: z.string().optional(),
-    email: z.string().email('Valid email address is required'),
-    phone: z.string().regex(/^[0-9-+()\s]{10,}$/, 'Valid phone number is required')
-  });
-  
+// Certificate Request Form Schema has been removed
 
 // Contact Form Schema
 export const contactFormSchema = z.object({
@@ -40,5 +27,5 @@ export const contactFormSchema = z.object({
 
 // Infer types from schemas
 export type InsuranceQuoteForm = z.infer<typeof insuranceQuoteSchema>;
-export type CertificateRequestForm = z.infer<typeof certificateRequestSchema>;
+// CertificateRequestForm type has been removed
 export type ContactForm = z.infer<typeof contactFormSchema>;

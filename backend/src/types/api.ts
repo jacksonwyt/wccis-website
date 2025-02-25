@@ -14,11 +14,6 @@ export interface ApiResponse<T = any> {
     phone: string;
   }
   
-  export interface CertificateRequest {
-    company: string;
-    policy: string;
-    email: string;
-  }
   
   export interface ContactRequest {
     name: string;

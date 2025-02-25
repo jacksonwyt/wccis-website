@@ -3,20 +3,23 @@ import { Request, Response } from 'express';
 import { asyncHandler } from './baseController';
 import { ContactRequest } from '../types/api';
 
-export const submitContactForm = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, message }: ContactRequest = req.body;
+// Handle contact form submissions
+export const submitContactRequest = asyncHandler(async (req: Request, res: Response) => {
+  // Extract data from request
+  const { _name, _email, _message } = req.body;
 
   // Additional validation or business logic here
   // For example, spam checking, message formatting, etc.
 
-  // Simulate processing (replace with actual business logic)
+  // This is a placeholder - would normally add the contact request to a database
+  // and/or send an email notification
   await new Promise(resolve => setTimeout(resolve, 1000));
 
+  // Return success response
   res.status(200).json({
     status: 'success',
     data: {
-      message: 'Contact form submitted successfully',
-      requestId: Date.now().toString()
+      message: 'Your message has been received. We will contact you shortly.',
     }
   });
 });
