@@ -53,11 +53,21 @@ export const configureSecurityMiddleware = (app: Express) => {
   // Apply form rate limiting to specific routes
   app.use(['/api/contact', '/api/insure'], formLimiter);
 
-  // CSRF Protection
-  app.use(doubleCsrfProtection);
-
-  // Add CSRF token to response
+  // CSRF Protection - exclude health check routes
   app.use((req, res, next) => {
+    // Skip CSRF protection for health check routes
+    if (req.path === '/api/health' || req.path === '/api/health/') {
+      return next();
+    }
+    doubleCsrfProtection(req, res, next);
+  });
+
+  // Add CSRF token to response - exclude health check routes
+  app.use((req, res, next) => {
+    // Skip adding CSRF token for health check routes
+    if (req.path === '/api/health' || req.path === '/api/health/') {
+      return next();
+    }
     res.cookie('XSRF-TOKEN', generateToken(req, res), {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict'

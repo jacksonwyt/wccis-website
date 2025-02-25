@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,12 +12,17 @@ const commercialAutoQuoteSchema = z.object({
   name: z.string().min(1, "Contact name is required"),
   email: z.string().email("Invalid email").min(1, "Email is required"),
   phone: z.string().min(1, "Phone is required"),
+  driversLicenses: z.any()
+    .refine((files: FileList | null) => files && files.length > 0, "Drivers license documents are required"),
+  vehicleRegistrations: z.any()
+    .refine((files: FileList | null) => files && files.length > 0, "Vehicle registration documents are required"),
   message: z.string().optional(),
 });
 
 type CommercialAutoQuote = z.infer<typeof commercialAutoQuoteSchema>;
 
 const CommercialAutoQuotePage = () => {
+  const router = useRouter();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,7 +92,7 @@ const CommercialAutoQuotePage = () => {
                 {...register('businessName')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-              {errors.businessName && (
+              {errors.businessName?.message && (
                 <p className="text-red-500 text-sm mt-1">{errors.businessName.message}</p>
               )}
             </div>
@@ -101,7 +107,7 @@ const CommercialAutoQuotePage = () => {
                 {...register('name')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-              {errors.name && (
+              {errors.name?.message && (
                 <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
               )}
             </div>
@@ -116,7 +122,7 @@ const CommercialAutoQuotePage = () => {
                 {...register('email')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-              {errors.email && (
+              {errors.email?.message && (
                 <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
@@ -131,11 +137,51 @@ const CommercialAutoQuotePage = () => {
                 {...register('phone')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-              {errors.phone && (
+              {errors.phone?.message && (
                 <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
               )}
             </div>
             
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="driversLicenses">
+                Drivers License Documents (Required)
+              </label>
+              <input
+                id="driversLicenses"
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                {...register('driversLicenses')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+              {errors.driversLicenses?.message && (
+                <p className="text-red-500 text-sm mt-1">{String(errors.driversLicenses.message)}</p>
+              )}
+              <p className="text-sm text-gray-500 mt-1">
+                Please upload copies of drivers licenses for all licensed drivers
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="vehicleRegistrations">
+                Vehicle Registration Documents (Required)
+              </label>
+              <input
+                id="vehicleRegistrations"
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                {...register('vehicleRegistrations')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+              {errors.vehicleRegistrations?.message && (
+                <p className="text-red-500 text-sm mt-1">{String(errors.vehicleRegistrations.message)}</p>
+              )}
+              <p className="text-sm text-gray-500 mt-1">
+                Please upload copies of vehicle registrations
+              </p>
+            </div>
+
             <div className="mb-6">
               <label className="block text-gray-700 mb-2" htmlFor="message">
                 Additional Information (Optional)

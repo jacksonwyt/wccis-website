@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,18 +8,25 @@ import { Button } from '@/components/ui/Button';
 
 // Define the schema
 const workersCompQuoteSchema = z.object({
-  businessName: z.string().min(1, "Business name is required"),
-  email: z.string().email("Invalid email").min(1, "Email is required"),
-  phone: z.string().min(1, "Phone is required"),
-  message: z.string().optional(),
+  feinNumber: z.string().min(1, "FEIN number is required"),
+  payrollByClassCode: z.string().min(1, "Payroll by class code is required"),
+  contractorsLicenseNumber: z.string().min(1, "Contractors license number is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email").min(1, "Email is required")
 });
 
 type WorkersCompQuote = z.infer<typeof workersCompQuoteSchema>;
 
 const WorkersCompQuotePage = () => {
+  const router = useRouter();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Reload the page data when the component mounts
+    router.replace(router.asPath);
+  }, [router]);
 
   const {
     register,
@@ -28,10 +36,11 @@ const WorkersCompQuotePage = () => {
   } = useForm<WorkersCompQuote>({
     resolver: zodResolver(workersCompQuoteSchema),
     defaultValues: {
-      businessName: '',
-      email: '',
+      feinNumber: '',
+      payrollByClassCode: '',
+      contractorsLicenseNumber: '',
       phone: '',
-      message: '',
+      email: ''
     },
   });
 
@@ -75,32 +84,48 @@ const WorkersCompQuotePage = () => {
           
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
-              <label className="block text-gray-700 mb-2" htmlFor="businessName">
-                Business Name
+              <label className="block text-gray-700 mb-2" htmlFor="feinNumber">
+                FEIN Number
               </label>
               <input
-                id="businessName"
+                id="feinNumber"
                 type="text"
-                {...register('businessName')}
+                {...register('feinNumber')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-              {errors.businessName && (
-                <p className="text-red-500 text-sm mt-1">{errors.businessName.message}</p>
+              {errors.feinNumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.feinNumber.message}</p>
               )}
             </div>
-            
+
             <div className="mb-4">
-              <label className="block text-gray-700 mb-2" htmlFor="email">
-                Email Address
+              <label className="block text-gray-700 mb-2" htmlFor="payrollByClassCode">
+                Payroll by Class Code
               </label>
               <input
-                id="email"
-                type="email"
-                {...register('email')}
+                id="payrollByClassCode"
+                type="text"
+                {...register('payrollByClassCode')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="Enter payroll amount and class code"
+              />
+              {errors.payrollByClassCode && (
+                <p className="text-red-500 text-sm mt-1">{errors.payrollByClassCode.message}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="contractorsLicenseNumber">
+                Contractors License Number
+              </label>
+              <input
+                id="contractorsLicenseNumber"
+                type="text"
+                {...register('contractorsLicenseNumber')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              {errors.contractorsLicenseNumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.contractorsLicenseNumber.message}</p>
               )}
             </div>
             
@@ -119,16 +144,19 @@ const WorkersCompQuotePage = () => {
               )}
             </div>
             
-            <div className="mb-6">
-              <label className="block text-gray-700 mb-2" htmlFor="message">
-                Additional Information (Optional)
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="email">
+                Email Address
               </label>
-              <textarea
-                id="message"
-                {...register('message')}
+              <input
+                id="email"
+                type="email"
+                {...register('email')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                rows={4}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              )}
             </div>
             
             <Button
@@ -146,4 +174,3 @@ const WorkersCompQuotePage = () => {
 };
 
 export default WorkersCompQuotePage;
-

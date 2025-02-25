@@ -1,8 +1,8 @@
 // backend/src/index.ts
-// backend/src/index.ts
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
 import { errorHandler } from './middleware/errorHandler';
 import { configureSecurityMiddleware } from './middleware/security';
 
@@ -32,6 +32,20 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Add compression middleware
+app.use(compression({
+  level: 6, // Default compression level
+  threshold: 0, // Compress all responses
+  filter: (req, res) => {
+    // Don't compress responses with this header
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    // Use compression filter function
+    return compression.filter(req, res);
+  }
+}));
 
 // Configure security middleware
 configureSecurityMiddleware(app);

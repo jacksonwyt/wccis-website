@@ -30,13 +30,17 @@ export const SECTION_IMAGES = {
 export const getImageProps = (
   imagePath: string, 
   alt: string,
-  priority = false
+  priority = false,
+  isHero = false
 ): Partial<ImageProps> => ({
   src: imagePath,
   alt,
   fill: true,
   className: "object-cover",
   priority,
-  sizes: "100vw",
-  quality: 90,
+  sizes: isHero 
+    ? "(max-width: 768px) 100vw, 100vw" 
+    : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  quality: isHero ? 85 : 80,
+  loading: priority ? undefined : 'lazy',
 });

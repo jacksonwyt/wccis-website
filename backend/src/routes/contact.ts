@@ -1,9 +1,10 @@
 // backend/src/routes/contact.ts
 import { Router } from 'express';
-import { submitContactRequest } from '../controllers/contactController';
+import { submitContactRequest, contactSchema } from '../controllers/contactController';
+import { validate } from '../middleware/validate';
 
 const router = Router();
 
-router.post('/', submitContactRequest);
+router.post('/', validate(contactSchema), submitContactRequest);
 
 export default router;

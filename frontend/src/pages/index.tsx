@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, Shield, Scale, ThumbsUp, ChevronRight } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
+import { getImageProps } from "@/utils/image-config";
 
 const HomePage = () => {
   const router = useRouter();
@@ -20,11 +21,11 @@ const HomePage = () => {
           <Image
             src="/images/hero/sunset-skyline.jpg"
             alt="City skyline at sunset"
-            fill
-            className="object-cover animate-image-glow"
-            priority
-            quality={90}
-            sizes="100vw"
+            fill={true}
+            className="object-cover"
+            priority={true}
+            sizes="(max-width: 768px) 100vw, 100vw"
+            quality={85}
           />
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
@@ -105,13 +106,13 @@ const HomePage = () => {
                   <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
                   <p className="text-gray-300 mb-6">{item.description}</p>
                   <Button
-  variant="ghost"
-  onClick={() => router.push(item.route)}
-  rightIcon={<ChevronRight className="w-4 h-4" />}
-  className="text-blue-400 hover:text-blue-300 p-0"
->
-  Learn More
-</Button>
+                    variant="ghost"
+                    onClick={() => router.push(item.route)}
+                    rightIcon={<ChevronRight className="w-4 h-4" />}
+                    className="text-blue-400 hover:text-blue-300 p-0"
+                  >
+                    Learn More
+                  </Button>
                 </div>
 
                 {/* Decorative gradient */}
@@ -227,13 +228,13 @@ const HomePage = () => {
               The finest compliment I can receive is a referral from you! Thank you for your trust.
             </p>
             <Button
-  variant="primary"
-  size="lg"
-  onClick={() => router.push(ROUTES.INSURE)}
-  rightIcon={<ArrowRight className="w-5 h-5" />}
->
-  Get Your Quote Now
-</Button>
+              variant="primary"
+              size="lg"
+              onClick={() => router.push(ROUTES.INSURE)}
+              rightIcon={<ArrowRight className="w-5 h-5" />}
+            >
+              Get Your Quote Now
+            </Button>
           </div>
         </div>
       </section>

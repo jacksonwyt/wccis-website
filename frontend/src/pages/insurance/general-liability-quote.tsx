@@ -1,62 +1,152 @@
 import type { NextPage } from 'next';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 import Layout from '@/components/Layout';
-import { Button } from '@/components/ui/Button';
+import { useFormStore } from '@/state/formStore';
+
+// Dynamically import the DynamicForm component
+const DynamicForm = dynamic(
+  () => import('@/components/DynamicForm').then(mod => ({ default: mod.DynamicForm })),
+  { 
+    loading: () => <FormSkeleton />,
+    ssr: false // Disable server-side rendering for this component
+  }
+);
+
+// Simple loading skeleton for the form
+const FormSkeleton = () => (
+  <div className="animate-pulse space-y-6">
+    {[...Array(7)].map((_, i) => (
+      <div key={i} className="space-y-2">
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+        <div className="h-10 bg-gray-100 rounded"></div>
+      </div>
+    ))}
+    <div className="h-10 bg-blue-100 rounded w-full"></div>
+  </div>
+);
 
 // Schema definition
 const generalLiabilityQuoteSchema = z.object({
-  companyName: z.string().min(1, "Company name is required"),
-  contactName: z.string().min(1, "Contact name is required"),
+  contractorLicense: z.string().min(1, "Contractor's license is required"),
   email: z.string().email("Invalid email").min(1, "Email is required"),
-  phone: z.string().min(1, "Phone is required"),
-  message: z.string().optional(),
+  phone: z.string().min(1, "Phone number is required").regex(/^[0-9-+()\s]{10,}$/, "Please enter a valid phone number"),
+  projectedGrossReceipts: z.string().min(1, "Projected gross receipts are required"),
+  payroll: z.string().min(1, "Payroll amount is required"),
+  subOutCosts: z.string().min(1, "Sub out costs are required"),
+  workDescription: z.string().min(1, "Brief description of work is required").max(500, "Description must be less than 500 characters")
 });
 
 type GeneralLiabilityQuote = z.infer<typeof generalLiabilityQuoteSchema>;
 
+// Notification component for success/error messages
+const Notification = React.memo(({ type, message }: { type: 'success' | 'error', message: string }) => {
+  if (!message) return null;
+  
+  const bgColor = type === 'success' ? 'bg-green-100' : 'bg-red-100';
+  const textColor = type === 'success' ? 'text-green-700' : 'text-red-700';
+  
+  return (
+    <div className={`mb-4 p-4 ${bgColor} ${textColor} rounded-md`}>
+      {message}
+    </div>
+  );
+});
+
 const GeneralLiabilityQuotePage: NextPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<GeneralLiabilityQuote>({
-    resolver: zodResolver(generalLiabilityQuoteSchema),
-    defaultValues: {
-      companyName: '',
-      contactName: '',
-      email: '',
-      phone: '',
-      message: '',
-    },
-  });
-
-  const onSubmit = async (data: GeneralLiabilityQuote) => {
-    setIsSubmitting(true);
+  const { markFormAsSubmitted } = useFormStore();
+  
+  // Memoize the submit handler to prevent unnecessary re-renders
+  const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
     setError('');
     try {
+      // Add performance timing for analytics
+      const startTime = performance.now();
+      
       const response = await fetch('/api/insure/general-liability', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache' // Ensure fresh response
+        },
         body: JSON.stringify(data),
       });
+      
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to submit quote request');
+      
+      // Record submission time for analytics
+      const endTime = performance.now();
+      console.debug(`Form submission took ${endTime - startTime}ms`);
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit quote request');
+      }
+      
+      // Mark form as submitted in the form store to prevent resubmission
+      markFormAsSubmitted('general-liability-quote');
+      
+      // Track successful submission
+      if (typeof window !== 'undefined' && 'gtag' in window) {
+        // @ts-ignore - gtag might not be typed
+        window.gtag?.('event', 'quote_submission', {
+          'event_category': 'forms',
+          'event_label': 'general_liability',
+          'value': 1
+        });
+      }
+      
       setSuccess('Your quote request has been submitted successfully!');
-      reset();
     } catch (error: any) {
       setError(error.message || 'An error occurred.');
-    } finally {
-      setIsSubmitting(false);
+      throw error; // Re-throw to let the DynamicForm error handling take over
     }
-  };
+  }, [markFormAsSubmitted]);
+
+  // Define the form fields
+  const formFields = [
+    {
+      name: 'contractorLicense',
+      label: "Contractor's License",
+      placeholder: "Enter your contractor's license number",
+    },
+    {
+      name: 'phone',
+      label: 'Phone Number',
+      type: 'tel',
+      placeholder: '(XXX) XXX-XXXX',
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      type: 'email',
+      placeholder: 'your@email.com',
+    },
+    {
+      name: 'projectedGrossReceipts',
+      label: 'Projected Gross Receipts',
+      placeholder: '$',
+    },
+    {
+      name: 'payroll',
+      label: 'Payroll',
+      placeholder: '$',
+    },
+    {
+      name: 'subOutCosts',
+      label: 'Sub Out Costs',
+      placeholder: '$',
+    },
+    {
+      name: 'workDescription',
+      label: 'Brief Description of Work Performed',
+      type: 'textarea',
+      placeholder: 'Please describe the type of work your company performs',
+    },
+  ];
 
   return (
     <Layout title="General Liability Insurance Quote | WCCIS">
@@ -64,99 +154,19 @@ const GeneralLiabilityQuotePage: NextPage = () => {
         <h1 className="text-3xl font-bold text-center mb-8">Get Your General Liability Quote</h1>
         
         <div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
-              {error}
-            </div>
-          )}
+          <Notification type="error" message={error} />
+          <Notification type="success" message={success} />
           
-          {success && (
-            <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
-              {success}
-            </div>
-          )}
-          
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2" htmlFor="companyName">
-                Company Name
-              </label>
-              <input
-                id="companyName"
-                type="text"
-                {...register('companyName')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-              {errors.companyName && (
-                <p className="text-red-500 text-sm mt-1">{errors.companyName.message}</p>
-              )}
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2" htmlFor="contactName">
-                Contact Name
-              </label>
-              <input
-                id="contactName"
-                type="text"
-                {...register('contactName')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-              {errors.contactName && (
-                <p className="text-red-500 text-sm mt-1">{errors.contactName.message}</p>
-              )}
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2" htmlFor="email">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                {...register('email')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-              )}
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2" htmlFor="phone">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                {...register('phone')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-              {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
-              )}
-            </div>
-            
-            <div className="mb-6">
-              <label className="block text-gray-700 mb-2" htmlFor="message">
-                Additional Information (Optional)
-              </label>
-              <textarea
-                id="message"
-                {...register('message')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                rows={4}
-              />
-            </div>
-            
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Request Quote'}
-            </Button>
-          </form>
+          <Suspense fallback={<FormSkeleton />}>
+            <DynamicForm
+              id="general-liability-quote"
+              fields={formFields}
+              schema={generalLiabilityQuoteSchema}
+              onSubmit={handleSubmit}
+              submitLabel="Request Quote"
+              persistData={true}
+            />
+          </Suspense>
         </div>
       </div>
     </Layout>

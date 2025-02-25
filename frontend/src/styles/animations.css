@@ -1,8 +1,9 @@
-/* Base animations.css */
+/* Base animations.css - Optimized for performance */
 
 /* Image glow effect for hero images */
 .animate-image-glow {
   animation: image-glow 4s ease-in-out infinite alternate;
+  will-change: filter;
 }
 
 @keyframes image-glow {
@@ -17,6 +18,7 @@
 /* Pulsing effect for hero section gradient overlays */
 .animate-hero-pulse {
   animation: hero-pulse 4s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
 @keyframes hero-pulse {
@@ -28,10 +30,11 @@
   }
 }
 
-/* Moving gradient background for sections */
+/* Moving gradient background for sections - optimized duration */
 .animate-gradient-xy {
-  animation: gradient-xy 15s ease infinite;
-  background-size: 400% 400%;
+  animation: gradient-xy 10s ease infinite; /* Reduced from 15s to 10s */
+  background-size: 300% 300%; /* Reduced from 400% to 300% */
+  will-change: background-position;
 }
 
 @keyframes gradient-xy {
@@ -46,9 +49,10 @@
   }
 }
 
-/* Blob animation for form backgrounds */
+/* Blob animation for form backgrounds - simplified */
 .animate-blob {
   animation: blob 7s infinite;
+  will-change: transform;
 }
 
 @keyframes blob {
@@ -56,10 +60,10 @@
     transform: translate(0px, 0px) scale(1);
   }
   33% {
-    transform: translate(30px, -50px) scale(1.1);
+    transform: translate(20px, -30px) scale(1.05); /* Reduced movement and scale */
   }
   66% {
-    transform: translate(-20px, 20px) scale(0.9);
+    transform: translate(-15px, 15px) scale(0.95); /* Reduced movement */
   }
   100% {
     transform: translate(0px, 0px) scale(1);
@@ -75,13 +79,11 @@
   animation-delay: 4s;
 }
 
-
-
-/* Slide-in animations */
+/* Slide-in animations - optimized */
 @keyframes slide-in-right {
   from {
     opacity: 0;
-    transform: translateX(-100px);
+    transform: translateX(-50px); /* Reduced from -100px */
   }
   to {
     opacity: 1;
@@ -92,7 +94,7 @@
 @keyframes slide-in-left {
   from {
     opacity: 0;
-    transform: translateX(100px);
+    transform: translateX(50px); /* Reduced from 100px */
   }
   to {
     opacity: 1;
@@ -113,7 +115,7 @@
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px); /* Reduced from 20px */
   }
   to {
     opacity: 1;
@@ -124,7 +126,7 @@
 @keyframes fade-in-down {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-15px); /* Reduced from -20px */
   }
   to {
     opacity: 1;
@@ -132,11 +134,11 @@
   }
 }
 
-/* Scale animations */
+/* Scale animations - simplified */
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95); /* Increased from 0.9 for less dramatic effect */
   }
   to {
     opacity: 1;
@@ -147,7 +149,7 @@
 @keyframes scale-out {
   from {
     opacity: 0;
-    transform: scale(1.1);
+    transform: scale(1.05); /* Reduced from 1.1 */
   }
   to {
     opacity: 1;
@@ -184,4 +186,13 @@
   animation: scale-out 0.6s ease forwards;
 }
 
-
+/* Add a media query to reduce animations for users who prefer reduced motion */
+@media (prefers-reduced-motion) {
+  .animate-image-glow,
+  .animate-hero-pulse,
+  .animate-gradient-xy,
+  .animate-blob {
+    animation: none !important;
+    transition: none !important;
+  }
+}
