@@ -42,15 +42,14 @@ services:
     name: wccis-frontend
     runtime: node
     rootDir: frontend
-    # Optimize the build process and clean up unnecessary files
+    # Simplify build process to avoid memory issues
     buildCommand: >
       npm ci --no-optional --no-audit --prefer-offline &&
-      npm run build:optimized &&
-      npm prune --production &&
-      rm -rf .next/cache
-    # Simplified Node options for better compatibility
+      NODE_OPTIONS='--max-old-space-size=512' next build &&
+      npm prune --production
+    # Use a simplified start command
     startCommand: >
-      NODE_OPTIONS="--max-old-space-size=512" node .next/standalone/server.js
+      NODE_ENV=production node .next/standalone/server.js
     # Add plan with memory specifications
     plan: starter
     # Clean npm cache during build to reduce memory usage

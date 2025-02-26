@@ -28,6 +28,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   experimental: {
+    // Remove features that might cause issues
     scrollRestoration: true,
     optimizeCss: true, // Enable CSS optimization
     optimizePackageImports: [
@@ -37,15 +38,9 @@ const nextConfig = {
       'framer-motion',
       'lodash-es'
     ],
-    // Add memory optimization options
+    // Remove turbo and simplify loaders
     serverMinification: true,
     gzipSize: false, // Disable gzip size calculation to save memory
-    turbo: {
-      // Updated from loaders to rules
-      rules: {
-        '*.svg': ['@svgr/webpack'],
-      },
-    },
   },
   // The ESLint config error is caused by these options
   // Disable ESLint during build to fix deployment issue
