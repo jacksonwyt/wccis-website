@@ -8,6 +8,35 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 8080
+      - key: FRONTEND_URL
+        value: https://wccis-frontend.onrender.com
+      - key: API_RATE_LIMIT
+        value: 100
+      - key: API_RATE_LIMIT_WINDOW
+        value: 15m
+      - key: RATE_LIMIT_WINDOW
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100
+      # You'll need to set these as secret environment variables in Render dashboard
+      # - key: SMTP_HOST
+      #   sync: false
+      # - key: SMTP_PORT
+      #   sync: false
+      # - key: SMTP_USER
+      #   sync: false
+      # - key: SMTP_PASS
+      #   sync: false
+      # - key: AWS_REGION
+      #   sync: false
+      # - key: AWS_ACCESS_KEY_ID
+      #   sync: false
+      # - key: AWS_SECRET_ACCESS_KEY
+      #   sync: false
+      # - key: AWS_S3_BUCKET
+      #   sync: false
     
   - type: web
     name: wccis-frontend
