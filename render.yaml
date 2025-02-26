@@ -29,8 +29,8 @@ services:
     # Enhanced build process to fix webpack bundle5 issue
     buildCommand: >
       npm ci && 
-NEXT_PUBLIC_API_URL=https://wccis.com/api NEXT_PUBLIC_SITE_URL=https://wccis.com NODE_ENV=production npm run build && 
-node fix-standalone.js && 
+      NEXT_PUBLIC_API_URL=https://wccis.com/api NEXT_PUBLIC_SITE_URL=https://wccis.com NODE_ENV=production npm run build && 
+      node fix-standalone.js && 
       cp -r public .next/standalone/ &&
       cp -r .next/static .next/standalone/.next/ &&
       cp -r .next/server .next/standalone/.next/ &&
