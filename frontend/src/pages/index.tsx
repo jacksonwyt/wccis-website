@@ -16,7 +16,7 @@ const HomePage = () => {
   return (
     <Layout title="WCCIS - Independent Insurance Agency for Contractors" pageType="home">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center" id="hero-section">
+      <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center" id="hero-section">
         <div className="absolute inset-0">
           <Image
             src="/images/hero/sunset-skyline.jpg"
@@ -46,7 +46,7 @@ const HomePage = () => {
                   </span>
                 </h1>
               </div>
-              <p className="text-xl text-gray-200 leading-relaxed max-w-2xl text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.5s_forwards]">
+              <p className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.5s_forwards]">
                 Same day free insurance quotes with access by phone, email, and texts.
                 Expert service you can trust.
               </p>
@@ -74,7 +74,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-8 mb-16">
             {[
               {
                 title: "General Liability",
@@ -123,13 +123,13 @@ const HomePage = () => {
 
           {/* Call to Action Buttons */}
           <div className="flex flex-col items-center justify-center mt-16">
-            <div className="flex justify-center gap-6">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 w-full sm:w-auto">
               <Button
                 variant="primary"
                 size="lg"
                 onClick={() => router.push(ROUTES.INSURE)}
                 rightIcon={<ArrowRight className="w-5 h-5" />}
-                className="transition-transform duration-200 hover:translate-x-1 text-lg px-8 py-6"
+                className="transition-transform duration-200 hover:translate-x-1 text-lg"
               >
                 Get Your Free Quote Today
               </Button>
@@ -137,7 +137,7 @@ const HomePage = () => {
                 variant="outline"
                 size="lg"
                 onClick={() => router.push(ROUTES.CONTACT)}
-                className="text-white border-white/30 hover:bg-white/10 transition-transform duration-200 hover:translate-x-1 text-lg px-8 py-6"
+                className="text-white border-white/30 hover:bg-white/10 transition-transform duration-200 hover:translate-x-1 text-lg"
               >
                 Speak with an Agent
               </Button>
@@ -147,18 +147,18 @@ const HomePage = () => {
       </section>
 
       {/* Features Section - Inspired by Frame.io's clean layout */}
-      <section className="py-24 bg-gradient-to-b from-gray-900 to-black">
+      <section className="py-16 md:py-24 bg-gradient-to-b from-gray-900 to-black">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6">
                 Why Choose WCCIS?
               </h2>
-              <p className="text-gray-300 text-lg mb-8">
+              <p className="text-gray-300 text-base md:text-lg mb-6 md:mb-8">
                 Your time is valuable. Get expert, quick answers to your insurance questions by speaking directly with us.
                 No third party services, no waiting for hours to get answers.
               </p>
-              <ul className="space-y-6">
+              <ul className="space-y-4 md:space-y-6">
                 {[
                   {
                     title: "96% Client Retention",
@@ -178,14 +178,14 @@ const HomePage = () => {
                 ].map((feature) => (
                   <li 
                     key={feature.title}
-                    className="flex items-start gap-4 p-4 bg-white/5 hover:bg-white/[0.07] transition-colors border border-white/10"
+                    className="flex items-start gap-2 md:gap-4 p-3 md:p-4 bg-white/5 hover:bg-white/[0.07] transition-colors border border-white/10"
                   >
-                    <div className="p-2 bg-gradient-to-br from-blue-500/30 to-blue-700/30">
-                      <feature.icon className="h-5 w-5 text-blue-400" />
+                    <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-500/30 to-blue-700/30">
+                      <feature.icon className="h-4 w-4 md:h-5 md:w-5 text-blue-400" />
                     </div>
                     <div>
-                      <h3 className="text-white font-medium mb-1">{feature.title}</h3>
-                      <p className="text-gray-300">{feature.description}</p>
+                      <h3 className="text-white text-sm md:text-base font-medium mb-0.5 md:mb-1">{feature.title}</h3>
+                      <p className="text-gray-300 text-xs md:text-sm">{feature.description}</p>
                     </div>
                   </li>
                 ))}
@@ -199,6 +199,8 @@ const HomePage = () => {
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  quality={80}
                 />
               </div>
               {/* Decorative elements */}
@@ -211,7 +213,7 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section - Inspired by Stripe's gradient call-to-action */}
-      <section className="py-24 relative overflow-hidden bg-gray-900">
+      <section className="py-16 md:py-24 relative overflow-hidden bg-gray-900">
         {/* Static gradient background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-400/20" />
@@ -220,10 +222,10 @@ const HomePage = () => {
         </div>
         <div className="container mx-auto px-4 relative">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6">
               Ready to Get Started?
             </h2>
-            <p className="text-gray-200 text-lg mb-8">
+            <p className="text-gray-200 text-base md:text-lg mb-6 md:mb-8">
               As an independent agent, I can better match your needs with the right company to save you money.
               The finest compliment I can receive is a referral from you! Thank you for your trust.
             </p>
@@ -232,6 +234,7 @@ const HomePage = () => {
               size="lg"
               onClick={() => router.push(ROUTES.INSURE)}
               rightIcon={<ArrowRight className="w-5 h-5" />}
+              className="w-full sm:w-auto"
             >
               Get Your Quote Now
             </Button>

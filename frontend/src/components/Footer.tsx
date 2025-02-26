@@ -34,14 +34,14 @@ const Footer = () => {
             <div className="space-y-2">
               <Link
                 href="tel:+18001234567"
-                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
+                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors py-2 md:py-1"
               >
                 <Phone className="w-4 h-4 mr-2" />
                 (800) 123-4567
               </Link>
               <Link
                 href="mailto:customerservice@wccis.com"
-                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
+                className="flex items-center text-gray-300 hover:text-blue-400 transition-colors py-2 md:py-1"
               >
                 <Mail className="w-4 h-4 mr-2" />
                 customerservice@wccis.com
@@ -66,7 +66,7 @@ const Footer = () => {
               <li>
                 <Link
                   href={ROUTES.INSURANCE.GENERAL_LIABILITY}
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-blue-400 transition-colors block py-2 md:py-1"
                 >
                   General Liability
                 </Link>
@@ -74,7 +74,7 @@ const Footer = () => {
               <li>
                 <Link
                   href={ROUTES.INSURANCE.WORKERS_COMP}
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-blue-400 transition-colors block py-2 md:py-1"
                 >
                   Workers Compensation
                 </Link>
@@ -82,7 +82,7 @@ const Footer = () => {
               <li>
                 <Link
                   href={ROUTES.INSURANCE.COMMERCIAL_AUTO}
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-blue-400 transition-colors block py-2 md:py-1"
                 >
                   Commercial Auto
                 </Link>
@@ -97,7 +97,7 @@ const Footer = () => {
               <li>
                 <Link
                   href={ROUTES.ABOUT}
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-blue-400 transition-colors block py-2 md:py-1"
                 >
                   About Us
                 </Link>
@@ -105,7 +105,7 @@ const Footer = () => {
               <li>
                 <Link
                   href={ROUTES.CONTACT}
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-blue-400 transition-colors block py-2 md:py-1"
                 >
                   Contact
                 </Link>
@@ -113,7 +113,7 @@ const Footer = () => {
               <li>
                 <Link
                   href={ROUTES.BLOG}
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
+                  className="text-gray-300 hover:text-blue-400 transition-colors block py-2 md:py-1"
                 >
                   Blog
                 </Link>
@@ -132,13 +132,13 @@ const Footer = () => {
             <div className="flex items-center space-x-6">
               <Link
                 href="/privacy"
-                className="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+                className="text-sm text-gray-400 hover:text-blue-400 transition-colors py-2 md:py-1"
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/terms"
-                className="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+                className="text-sm text-gray-400 hover:text-blue-400 transition-colors py-2 md:py-1"
               >
                 Terms of Service
               </Link>

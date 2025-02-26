@@ -33,19 +33,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       glass: "backdrop-blur-md bg-white/30 hover:bg-white/40 border border-white/30 text-brand-dark"
     };
 
-    const sizes = {
-      sm: "px-4 py-2 text-sm gap-2 rounded-[var(--border-radius-sm)]",
-      md: "px-6 py-3 text-base gap-3 rounded-[var(--border-radius-md)]",
-      lg: "px-8 py-4 text-lg gap-3 rounded-[var(--border-radius-md)]"
-    };
-
     return (
       <button
         ref={ref}
         className={cn(
           baseStyles,
           variants[variant],
-          sizes[size as 'sm' | 'md' | 'lg'],
+          size === "sm" && "px-3 py-1.5 md:px-4 md:py-2 text-sm gap-2 rounded-[var(--border-radius-sm)]",
+          size === "md" && "px-5 py-2.5 md:px-6 md:py-3 text-base gap-3 rounded-[var(--border-radius-md)]",
+          size === "lg" && "px-6 py-3 md:px-8 md:py-4 text-base md:text-lg gap-3 rounded-[var(--border-radius-md)]",
           (disabled || isLoading) ? "opacity-50 cursor-not-allowed" : "",
           className || ""
         )}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 import Layout from '@/components/Layout';
 import { useFormStore } from '@/state/formStore';
+import { FormLayout } from '@/components/ui/FormLayout';
 
 // Dynamically import the DynamicForm component
 const DynamicForm = dynamic(
@@ -20,11 +21,11 @@ const FormSkeleton = () => (
   <div className="space-y-6">
     {[...Array(7)].map((_, i) => (
       <div key={i} className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-        <div className="h-10 bg-gray-100 rounded"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+        <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded"></div>
       </div>
     ))}
-    <div className="h-10 bg-blue-100 rounded w-full"></div>
+    <div className="h-10 bg-blue-100 dark:bg-blue-900/30 rounded w-full"></div>
   </div>
 );
 
@@ -149,26 +150,44 @@ const GeneralLiabilityQuotePage: NextPage = () => {
   ];
 
   return (
-    <Layout title="General Liability Insurance Quote | WCCIS">
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold text-center mb-8">Get Your General Liability Quote</h1>
-        
-        <div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-          <Notification type="error" message={error} />
-          <Notification type="success" message={success} />
-          
-          <Suspense fallback={<FormSkeleton />}>
-            <DynamicForm
-              id="general-liability-quote"
-              fields={formFields}
-              schema={generalLiabilityQuoteSchema}
-              onSubmit={handleSubmit}
-              submitLabel="Request Quote"
-              persistData={true}
-            />
-          </Suspense>
+    <Layout title="General Liability Insurance Quote | WCCIS" pageType="insurance">
+      {/* Hero Section */}
+      <section className="relative py-24 bg-gradient-to-b from-gray-900 to-black">
+        {/* Background overlay */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-400/20" />
+          <div className="absolute inset-0 bg-gray-900/90" />
         </div>
-      </div>
+        
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Get Your General Liability Quote</h1>
+            <p className="text-xl text-gray-300 leading-relaxed">
+              Protect your business with comprehensive coverage
+            </p>
+          </div>
+
+          <FormLayout
+            title="General Liability Insurance Quote Request"
+            subtitle="Please fill out the form below and we'll get back to you with a quote as soon as possible."
+            error={error}
+            success={success}
+            maxWidth="xl"
+            className="mx-auto"
+          >
+            <Suspense fallback={<FormSkeleton />}>
+              <DynamicForm
+                id="general-liability-quote"
+                fields={formFields}
+                schema={generalLiabilityQuoteSchema}
+                onSubmit={handleSubmit}
+                submitLabel="Request Quote"
+                persistData={true}
+              />
+            </Suspense>
+          </FormLayout>
+        </div>
+      </section>
     </Layout>
   );
 };
