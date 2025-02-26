@@ -7,6 +7,8 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
 import { FormLayout } from '@/components/ui/FormLayout';
 import { ArrowRight } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import FormSkeleton from '@/components/FormSkeleton';
 
 // Define the schema
 const workersCompQuoteSchema = z.object({
@@ -18,6 +20,15 @@ const workersCompQuoteSchema = z.object({
 });
 
 type WorkersCompQuote = z.infer<typeof workersCompQuoteSchema>;
+
+// Dynamically import the DynamicForm component
+const DynamicForm = dynamic(
+  () => import('@/components/DynamicForm').then(mod => ({ default: mod.DynamicForm })),
+  { 
+    loading: () => <FormSkeleton />,
+    ssr: false // Disable server-side rendering for this component
+  }
+);
 
 const WorkersCompQuotePage = () => {
   const router = useRouter();

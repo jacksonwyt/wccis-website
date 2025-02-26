@@ -2,11 +2,11 @@ import { createLazyComponent } from '@/utils/lazy-load';
 
 // Lazy loaded layout components with default exports
 export const Header = createLazyComponent(
-  () => import('./Header').then(module => ({ default: module.default })),
+  () => import('./Header'),
 );
 
 export const Footer = createLazyComponent(
-  () => import('./Footer').then(module => ({ default: module.default })),
+  () => import('./Footer'),
 );
 
 // Lazy loaded UI components with named exports
@@ -29,11 +29,11 @@ export const DynamicForm = createLazyComponent(
 
 // Lazy loaded section components with default exports
 export const WhyChooseUs = createLazyComponent(
-  () => import('./WhyChooseUs').then(module => ({ default: module.default })),
+  () => import('./WhyChooseUs'),
 );
 
 export const ContactInfo = createLazyComponent(
-  () => import('./ContactInfo').then(module => ({ default: module.default })),
+  () => import('./ContactInfo'),
 );
 
 // AnimatedSection has a named export, not a default export

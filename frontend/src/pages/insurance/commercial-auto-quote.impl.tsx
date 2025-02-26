@@ -7,6 +7,8 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
 import { FormLayout } from '@/components/ui/FormLayout';
 import { ArrowRight } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import FormSkeleton from '@/components/FormSkeleton';
 
 // Schema definition
 const commercialAutoQuoteSchema = z.object({
@@ -22,6 +24,15 @@ const commercialAutoQuoteSchema = z.object({
 });
 
 type CommercialAutoQuote = z.infer<typeof commercialAutoQuoteSchema>;
+
+// Dynamically import the DynamicForm component
+const DynamicForm = dynamic(
+  () => import('@/components/DynamicForm').then(mod => ({ default: mod.DynamicForm })),
+  { 
+    loading: () => <FormSkeleton />,
+    ssr: false // Disable server-side rendering for this component
+  }
+);
 
 const CommercialAutoQuotePage = () => {
   const router = useRouter();

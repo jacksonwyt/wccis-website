@@ -6,6 +6,7 @@ import * as z from 'zod';
 import Layout from '@/components/Layout';
 import { useFormStore } from '@/state/formStore';
 import { FormLayout } from '@/components/ui/FormLayout';
+import FormSkeleton from '@/components/FormSkeleton';
 
 // Dynamically import the DynamicForm component
 const DynamicForm = dynamic(
@@ -14,19 +15,6 @@ const DynamicForm = dynamic(
     loading: () => <FormSkeleton />,
     ssr: false // Disable server-side rendering for this component
   }
-);
-
-// Simple loading skeleton for the form
-const FormSkeleton = () => (
-  <div className="space-y-6">
-    {[...Array(7)].map((_, i) => (
-      <div key={i} className="space-y-2">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-        <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded"></div>
-      </div>
-    ))}
-    <div className="h-10 bg-blue-100 dark:bg-blue-900/30 rounded w-full"></div>
-  </div>
 );
 
 // Schema definition
