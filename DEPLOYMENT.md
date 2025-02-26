@@ -228,6 +228,16 @@ This is reflected in the `render.yaml` configuration and in the package.json scr
 "start:standalone": "node .next/standalone/server.js"
 ```
 
+### Node.js Options for Deployment
+
+When deploying to platforms like Render, be careful with the Node.js options you use. Some options are deprecated or not allowed in newer Node.js versions. The following options are compatible with Node.js 22+:
+
+```
+NODE_OPTIONS="--max-old-space-size=512 --no-lazy --gc-interval=100 --max-semi-space-size=16 --max-executable-size=48"
+```
+
+Avoid using deprecated flags like `--optimize-for-size` which is no longer supported in recent Node.js versions and will cause deployment failures.
+
 ### Troubleshooting Deployment Issues
 
 If you encounter a TypeScript error like: `TypeError: Cannot read properties of undefined (reading 'default')`, it's likely that the application is being started with `next start` instead of using the standalone server.
