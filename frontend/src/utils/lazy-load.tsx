@@ -22,20 +22,19 @@ export const LazyLoadWrapper: React.FC<LazyLoadWrapperProps> = ({
   </Suspense>
 );
 
-// Define a type for the import function that always returns a module with a default export
+// Define a type for the import function
 type ImportFunc<T> = () => Promise<{ default: T }>;
 
 /**
- * Higher order function to create lazy loaded components that works with both
- * default exports and named exports
+ * Higher order function to create lazy loaded components that works with
+ * default exports
  * 
  * @param importFunc Dynamic import function that returns a module with a default export
  * @param fallback Optional fallback component to show during loading
  * @returns Lazy loaded component
  * 
- * Usage examples:
- * - For default exports: () => import('./Component').then(m => ({ default: m.default }))
- * - For named exports: () => import('./Component').then(m => ({ default: m.NamedComponent }))
+ * Usage example:
+ * - For default exports: () => import('./Component')
  */
 export function createLazyComponent<T extends React.ComponentType<any>>(
   importFunc: ImportFunc<T>,
