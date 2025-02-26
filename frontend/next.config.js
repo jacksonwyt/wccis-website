@@ -34,9 +34,9 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   experimental: {
-    // Remove features that might cause issues
+    // Simplified experimental features
     scrollRestoration: true,
-    optimizeCss: true, // Enable CSS optimization
+    optimizeCss: true,
     optimizePackageImports: [
       'lucide-react', 
       '@radix-ui/react-dialog', 
@@ -44,9 +44,6 @@ const nextConfig = {
       'framer-motion',
       'lodash-es'
     ],
-    // Remove turbo and simplify loaders
-    serverMinification: true,
-    gzipSize: false, // Disable gzip size calculation to save memory
   },
   // Disable ESLint during build to fix deployment issue
   eslint: {
@@ -121,7 +118,7 @@ const nextConfig = {
       },
     ];
   },
-  // Custom webpack config for optimization
+  // Simplified webpack config
   webpack: (config, { dev, isServer }) => {
     // Only optimize in production builds
     if (!dev) {
@@ -130,51 +127,8 @@ const nextConfig = {
         if (minimizer.constructor.name === 'TerserPlugin') {
           minimizer.options.terserOptions.compress.drop_console = true;
           minimizer.options.terserOptions.compress.drop_debugger = true;
-          minimizer.options.terserOptions.compress.pure_funcs = [
-            'console.log',
-            'console.info',
-            'console.debug',
-            'console.warn'
-          ];
         }
       });
-
-      // Optimize client-side bundles - simplified for better stability
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        minSize: 20000,
-        maxSize: 90000, // Reduced from 120000 to 90000 for better memory usage
-        minChunks: 2,
-        maxAsyncRequests: 30,
-        maxInitialRequests: 25,
-        automaticNameDelimiter: '~',
-        cacheGroups: {
-          framework: {
-            name: 'framework',
-            test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|next|scheduler)[\\/]/,
-            priority: 40,
-            reuseExistingChunk: true,
-          },
-          commons: {
-            name: 'commons',
-            minChunks: 3,
-            priority: 10,
-            reuseExistingChunk: true,
-          },
-          default: {
-            minChunks: 2,
-            priority: -20,
-            reuseExistingChunk: true,
-          },
-        },
-      };
-    }
-
-    // Add support for proper handling of dynamic imports
-    if (!isServer) {
-      config.output.chunkFilename = dev
-        ? '[name].js'
-        : '[name].[contenthash].js';
     }
 
     // Simplified handling of sharp for image optimization

@@ -24,16 +24,16 @@ services:
   - type: web
     name: wccis-frontend
     runtime: node
-    nodeVersion: 18
+    nodeVersion: 22.12.0
     rootDir: frontend
-    # Simplified build process to avoid webpack issues
+    # Modified build process to fix webpack bundle5 issue
     buildCommand: >
       npm ci --no-optional --no-audit --prefer-offline &&
       NODE_ENV=production 
       NEXT_PUBLIC_API_URL=https://wccis.com/api 
       NEXT_PUBLIC_SITE_URL=https://wccis.com 
       NODE_OPTIONS='--max-old-space-size=512' 
-      npm run build &&
+      npm run build:render &&
       cp -r public .next/standalone/ &&
       cp -r .next/static .next/standalone/.next/ &&
       cp -r .next/server .next/standalone/.next/ &&
@@ -48,7 +48,6 @@ services:
       NEXT_PUBLIC_API_URL=https://wccis.com/api 
       NEXT_PUBLIC_SITE_URL=https://wccis.com 
       PORT=10000 
-      node .next/standalone/test-server.js && 
       node .next/standalone/server.js
     # Add plan with memory specifications
     plan: starter

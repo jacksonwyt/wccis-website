@@ -17,7 +17,9 @@
     "analyze": "ANALYZE=true next build",
     "test": "jest",
     "test:watch": "jest --watch",
-    "shadcn": "shadcn-ui"
+    "shadcn": "shadcn-ui",
+    "fix-standalone": "node fix-standalone.js",
+    "build:render": "next build && node fix-standalone.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.0.0",
