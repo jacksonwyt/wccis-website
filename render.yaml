@@ -4,7 +4,7 @@ services:
     runtime: node
     rootDir: backend
     buildCommand: yarn install && yarn build
-    startCommand: yarn start
+    startCommand: NODE_ENV=production node dist/index.js
     envVars:
       - key: NODE_ENV
         value: production
