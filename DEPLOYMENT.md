@@ -205,3 +205,41 @@ server {
 - Regularly update dependencies
 - Monitor server health and performance
 - Set up automatic security updates 
+
+## Next.js Standalone Deployment
+
+This project uses Next.js with the `output: 'standalone'` configuration in `next.config.js`. This provides several benefits:
+
+- Creates a minimal production build with reduced dependencies
+- Improves startup time and reduces memory usage
+- Better compatibility with serverless and containerized environments
+
+### Important Note About Starting the Application
+
+When using the `standalone` output configuration, you **cannot** use the standard `next start` command to start the application. Instead, you must use:
+
+```bash
+node .next/standalone/server.js
+```
+
+This is reflected in the `render.yaml` configuration and in the package.json scripts:
+
+```json
+"start:standalone": "node .next/standalone/server.js"
+```
+
+### Troubleshooting Deployment Issues
+
+If you encounter a TypeScript error like: `TypeError: Cannot read properties of undefined (reading 'default')`, it's likely that the application is being started with `next start` instead of using the standalone server.
+
+Make sure your deployment platform is using the correct start command:
+
+```bash
+# Don't use this with standalone output
+npm run start         # This runs: next start
+
+# Use this instead
+npm run start:standalone  # This runs: node .next/standalone/server.js
+```
+
+For Render deployments, the `startCommand` in `render.yaml` should be set to use the standalone server. 
