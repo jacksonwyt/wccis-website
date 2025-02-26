@@ -48,13 +48,9 @@ services:
       npm run build:optimized &&
       npm prune --production &&
       rm -rf .next/cache
-    # More fine-tuned Node options for memory efficiency
+    # Simplified Node options for better compatibility
     startCommand: >
-      NODE_OPTIONS="--max-old-space-size=512 
-      --no-lazy
-      --gc-interval=100
-      --max-semi-space-size=16
-      --max-executable-size=48" node .next/standalone/server.js
+      NODE_OPTIONS="--max-old-space-size=512" node .next/standalone/server.js
     # Add plan with memory specifications
     plan: starter
     # Clean npm cache during build to reduce memory usage

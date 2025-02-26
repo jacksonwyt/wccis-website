@@ -230,13 +230,22 @@ This is reflected in the `render.yaml` configuration and in the package.json scr
 
 ### Node.js Options for Deployment
 
-When deploying to platforms like Render, be careful with the Node.js options you use. Some options are deprecated or not allowed in newer Node.js versions. The following options are compatible with Node.js 22+:
+When deploying to platforms like Render, be careful with the Node.js options you use. Some options are deprecated or not allowed in newer Node.js versions, especially in Node.js 22+. 
+
+For maximum compatibility, it's recommended to only use simple, well-supported flags:
 
 ```
-NODE_OPTIONS="--max-old-space-size=512 --no-lazy --gc-interval=100 --max-semi-space-size=16 --max-executable-size=48"
+NODE_OPTIONS="--max-old-space-size=512"
 ```
 
-Avoid using deprecated flags like `--optimize-for-size` which is no longer supported in recent Node.js versions and will cause deployment failures.
+Avoid using the following flags which are no longer supported in recent Node.js versions and will cause deployment failures:
+- `--optimize-for-size` 
+- `--no-lazy`
+- `--gc-interval=100`
+- `--max-semi-space-size=16`
+- `--max-executable-size=48`
+
+These V8 engine flags were supported in older versions but are being increasingly restricted in newer Node.js versions for security and stability reasons.
 
 ### Troubleshooting Deployment Issues
 
