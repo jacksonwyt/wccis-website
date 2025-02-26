@@ -20,39 +20,23 @@ services:
         value: 900000
       - key: RATE_LIMIT_MAX
         value: 100
-      # Other secret environment variables can be set in Render dashboard if needed
-      # - key: AWS_REGION
-      #   sync: false
-      # - key: AWS_ACCESS_KEY_ID
-      #   sync: false
-      # - key: AWS_SECRET_ACCESS_KEY
-      #   sync: false
-      # - key: AWS_S3_BUCKET
-      #   sync: false
     
   - type: web
     name: wccis-frontend
     runtime: node
     rootDir: frontend
-    # Simplify build process to avoid memory issues
+    # Modified build process to fix standalone output issues
     buildCommand: >
       npm ci --no-optional --no-audit --prefer-offline &&
       NODE_OPTIONS='--max-old-space-size=512' ./node_modules/.bin/next build &&
+      cp -r public .next/standalone/ &&
+      cp -r .next/static .next/standalone/.next/ &&
       npm prune --production
-    # Use a simplified start command
+    # Modified start command to correctly serve static files
     startCommand: >
       NODE_ENV=production node .next/standalone/server.js
     # Add plan with memory specifications
     plan: starter
-    # Clean npm cache during build to reduce memory usage
-    buildFilter:
-      paths:
-        - frontend/src/**
-        - frontend/public/**
-        - frontend/package.json
-        - frontend/next.config.js
-    # Health check endpoint to monitor the service
-    healthCheckPath: /
     # Cache configuration for static assets
     disk:
       name: node-cache
@@ -65,11 +49,7 @@ services:
         value: https://wccis-backend.onrender.com/api
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
+      - key: PORT 
+        value: "10000"
       - key: NODE_OPTIONS
         value: "--max-old-space-size=512"
-      - key: NEXT_SHARP_PATH
-        value: /cache/node_modules/sharp
-      - key: NEXT_CACHE_DIR
-        value: /cache/.next
-      - key: npm_config_cache
-        value: /cache/npm

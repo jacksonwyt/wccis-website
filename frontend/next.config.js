@@ -23,6 +23,12 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24, // Increase to 24 hours
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
@@ -42,19 +48,19 @@ const nextConfig = {
     serverMinification: true,
     gzipSize: false, // Disable gzip size calculation to save memory
   },
-  // The ESLint config error is caused by these options
   // Disable ESLint during build to fix deployment issue
   eslint: {
-    ignoreDuringBuilds: true, // Set to true to bypass ESLint during builds
+    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: false,
   },
   // Add memory optimizations for production
-  // swcMinify is now the default in Next.js 15, so it can be removed
   poweredByHeader: false, // Remove unnecessary header
   output: 'standalone', // Creates a standalone build with minimal dependencies
   compress: true, // Enable compression
+  // Static optimization improvements
+  staticPageGenerationTimeout: 120,
   headers: async () => {
     return [
       {
