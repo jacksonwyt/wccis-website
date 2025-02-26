@@ -3,9 +3,7 @@ services:
     name: wccis-backend
     runtime: node
     rootDir: backend
-    buildCommand: npm ci && 
-NEXT_PUBLIC_API_URL=https://wccis.com/api NEXT_PUBLIC_SITE_URL=https://wccis.com NODE_ENV=production npm run build && 
-node fix-standalone.js  
+    buildCommand: yarn install && yarn build
     startCommand: NODE_ENV=production node dist/index.js
     envVars:
       - key: NODE_ENV
@@ -30,13 +28,9 @@ node fix-standalone.js
     rootDir: frontend
     # Enhanced build process to fix webpack bundle5 issue
     buildCommand: >
-      npm ci --no-optional --no-audit --prefer-offline &&
-      NODE_ENV=production 
-      NEXT_PUBLIC_API_URL=https://wccis.com/api 
-      NEXT_PUBLIC_SITE_URL=https://wccis.com 
-      NODE_OPTIONS='--max-old-space-size=512' 
-      npm run build &&
-      node fix-standalone.js &&
+      npm ci && 
+NEXT_PUBLIC_API_URL=https://wccis.com/api NEXT_PUBLIC_SITE_URL=https://wccis.com NODE_ENV=production npm run build && 
+node fix-standalone.js && 
       cp -r public .next/standalone/ &&
       cp -r .next/static .next/standalone/.next/ &&
       cp -r .next/server .next/standalone/.next/ &&
