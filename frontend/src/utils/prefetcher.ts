@@ -54,9 +54,9 @@ export const prefetchAfterDelay = (importFunc: () => Promise<any>, delay = 150) 
  */
 export const commonImports = {
   quoteForms: [
-    () => import('@/pages/insurance/general-liability-quote.impl'),
-    () => import('@/pages/insurance/commercial-auto-quote.impl'),
-    () => import('@/pages/insurance/workers-comp-quote.impl'),
+    () => import('@/pages/insurance/general-liability-quote'),
+    () => import('@/pages/insurance/commercial-auto-quote'),
+    () => import('@/pages/insurance/workers-comp-quote'),
     () => import('@/components/DynamicForm'), 
   ],
   layout: [
@@ -64,6 +64,6 @@ export const commonImports = {
     () => import('@/components/Footer'),
   ],
   contact: [
-    () => import('@/pages/contact.impl')
+    () => import('@/pages/contact')
   ]
 }; 

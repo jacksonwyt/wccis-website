@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Shield, Clock, FileText, Phone } from "lucide-react";
 import { Background } from "./Background";
-import { WhyChooseUs, ContactInfo } from "./lazy-components";
-import { LazyLoadWrapper } from "@/utils/lazy-load";
+import { WhyChooseUs, ContactInfo } from "./dynamic-components";
+import { DefaultLoadingSpinner } from "./ui/LoadingComponents";
 
 interface QuoteLayoutProps {
   children: React.ReactNode;
@@ -13,12 +13,18 @@ interface QuoteLayoutProps {
 }
 
 // Simple loading skelton for side components
-const SideSkeleton = () => (
-  <div className="space-y-3 animate-pulse">
-    <div className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-    <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-  </div>
-);
+const SideSkeleton = ({ isLoading, pastDelay }: { isLoading?: boolean; pastDelay?: boolean }): React.ReactElement | null => {
+  if (!isLoading || !pastDelay) {
+    return null;
+  }
+  
+  return (
+    <div className="space-y-3 animate-pulse">
+      <div className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+      <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+    </div>
+  );
+};
 
 const QuoteLayout = React.memo(({ 
   children, 
@@ -50,12 +56,12 @@ const QuoteLayout = React.memo(({
 
           {/* Side Info */}
           <div className="space-y-6">
-            <LazyLoadWrapper fallback={<SideSkeleton />}>
+            <Suspense fallback={<SideSkeleton isLoading={true} pastDelay={true} />}>
               <div className="space-y-6">
                 <WhyChooseUs />
                 <ContactInfo />
               </div>
-            </LazyLoadWrapper>
+            </Suspense>
           </div>
         </div>
       </div>
