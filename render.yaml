@@ -19,8 +19,4 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          name: wccis-backend
-          type: web
-          property: url
-        postfix: /api
+        value: https://wccis-backend.onrender.com/api
