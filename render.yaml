@@ -43,10 +43,10 @@ services:
     runtime: node
     rootDir: frontend
     # Simplify build process to avoid memory issues
-    buildCommand: >
-      npm ci --no-optional --no-audit --prefer-offline &&
-      NODE_OPTIONS='--max-old-space-size=512' next build &&
-      npm prune --production
+   buildCommand: >
+  npm ci --no-optional --no-audit --prefer-offline &&
+  NODE_OPTIONS='--max-old-space-size=512' ./node_modules/.bin/next build &&
+  npm prune --production
     # Use a simplified start command
     startCommand: >
       NODE_ENV=production node .next/standalone/server.js

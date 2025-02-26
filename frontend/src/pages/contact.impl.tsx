@@ -25,12 +25,27 @@ const ContactPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Submit form data to your backend here
-    console.log('Form submitted:', formData);
+    
+    // Format the message body
+    const body = `
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone || 'Not provided'}
+Message:
+${formData.message}
+    `;
+    
+    // Create the mailto URL
+    const mailtoURL = `mailto:info@wccis.com?subject=Contact Form from ${formData.name}&body=${encodeURIComponent(body)}`;
+    
+    // Open the user's default email client
+    window.open(mailtoURL, '_blank');
+    
     // Reset form
     setFormData({ name: '', email: '', phone: '', message: '' });
+    
     // Show success message
-    alert('Message sent successfully! We will get back to you soon.');
+    alert('Your email client has been opened. Please send the email to complete your message.');
   };
 
   return (

@@ -61,14 +61,24 @@ const WorkersCompQuotePage = () => {
     setIsSubmitting(true);
     setError('');
     try {
-      const response = await fetch('/api/insure/workers-comp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to submit quote request');
-      setSuccess('Your quote request has been submitted successfully!');
+      // Format the message body
+      const formattedData = Object.entries(data)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n');
+      
+      const body = `
+Workers Compensation Quote Request
+
+${formattedData}
+      `;
+      
+      // Create the mailto URL
+      const mailtoURL = `mailto:customerservice@wccis.com?subject=Workers Compensation Quote Request&body=${encodeURIComponent(body)}`;
+      
+      // Open the user's default email client
+      window.open(mailtoURL, '_blank');
+      
+      setSuccess('Your email client has been opened. Please send the email to complete your request.');
       reset();
     } catch (error: any) {
       setError(error.message || 'An error occurred.');

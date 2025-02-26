@@ -53,27 +53,27 @@ const GeneralLiabilityQuotePage: NextPage = () => {
   const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
     setError('');
     try {
-      // Add performance timing for analytics
-      const startTime = performance.now();
+      // Format the message body
+      const formattedData = Object.entries(data)
+        .map(([key, value]) => {
+          if (typeof value === 'object' && value !== null) {
+            return `${key}: ${JSON.stringify(value, null, 2)}`;
+          }
+          return `${key}: ${value}`;
+        })
+        .join('\n');
       
-      const response = await fetch('/api/insure/general-liability', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache' // Ensure fresh response
-        },
-        body: JSON.stringify(data),
-      });
+      const body = `
+General Liability Quote Request
+
+${formattedData}
+      `;
       
-      const result = await response.json();
+      // Create the mailto URL
+      const mailtoURL = `mailto:customerservice@wccis.com?subject=General Liability Quote Request&body=${encodeURIComponent(body)}`;
       
-      // Record submission time for analytics
-      const endTime = performance.now();
-      console.debug(`Form submission took ${endTime - startTime}ms`);
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to submit quote request');
-      }
+      // Open the user's default email client
+      window.open(mailtoURL, '_blank');
       
       // Mark form as submitted in the form store to prevent resubmission
       markFormAsSubmitted('general-liability-quote');
@@ -88,10 +88,9 @@ const GeneralLiabilityQuotePage: NextPage = () => {
         });
       }
       
-      setSuccess('Your quote request has been submitted successfully!');
+      setSuccess('Your email client has been opened. Please send the email to complete your request.');
     } catch (error: any) {
       setError(error.message || 'An error occurred.');
-      throw error; // Re-throw to let the DynamicForm error handling take over
     }
   }, [markFormAsSubmitted]);
 
