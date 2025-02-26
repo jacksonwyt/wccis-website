@@ -68,11 +68,6 @@ services:
         - frontend/next.config.js
     # Health check endpoint to monitor the service
     healthCheckPath: /
-    # Autoscaling configuration
-    autoscaling:
-      minInstances: 1
-      maxInstances: 1
-      targetMemoryPercent: 80
     # Cache configuration for static assets
     disk:
       name: node-cache
