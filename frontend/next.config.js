@@ -39,7 +39,6 @@ const nextConfig = {
     ],
     // Add memory optimization options
     serverMinification: true,
-    serverExternalPackages: [], // Fixed from serverComponentsExternalPackages
     gzipSize: false, // Disable gzip size calculation to save memory
     turbo: {
       // Updated from loaders to rules

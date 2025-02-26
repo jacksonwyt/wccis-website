@@ -1,11 +1,9 @@
-import type { NextPage } from 'next';
 import React from 'react';
-import { ContactPage } from './lazy-pages';
+import { ContactPage } from '@/utils/lazy-pages';
 
-// Optimized wrapper for the Contact page
-// This creates a smaller entry point that only loads the full page when needed
-const ContactWrapper: NextPage = () => {
+// This is a wrapper component that renders the lazy loaded page
+const Contact = () => {
   return <ContactPage />;
 };
 
-export default ContactWrapper; 
+export default Contact; 

@@ -1,11 +1,10 @@
 import type { NextPage } from 'next';
 import React from 'react';
-import { CommercialAutoQuotePage } from '../lazy-pages';
+import { CommercialAutoQuotePage } from '@/utils/lazy-pages';
 
-// Optimized wrapper for the Commercial Auto Quote page
-// This creates a smaller entry point that only loads the full page when needed
-const CommercialAutoQuoteWrapper: NextPage = () => {
+// Wrapper component that loads the full implementation lazily
+const CommercialAutoQuote: NextPage = () => {
   return <CommercialAutoQuotePage />;
 };
 
-export default CommercialAutoQuoteWrapper; 
+export default CommercialAutoQuote; 

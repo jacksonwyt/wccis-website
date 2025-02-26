@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import React from 'react';
-import { GeneralLiabilityQuotePage } from '../lazy-pages';
+import { GeneralLiabilityQuotePage } from '@/utils/lazy-pages';
 import { DefaultLoadingFallback } from '@/utils/lazy-load';
 
 // Optimized wrapper for the General Liability Quote page
