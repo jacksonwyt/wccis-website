@@ -30,7 +30,23 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true,
     optimizeCss: true, // Enable CSS optimization
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+    optimizePackageImports: [
+      'lucide-react', 
+      '@radix-ui/react-dialog', 
+      '@radix-ui/react-dropdown-menu',
+      'framer-motion',
+      'lodash-es'
+    ],
+    // Add memory optimization options
+    serverMinification: true,
+    serverExternalPackages: [], // Fixed from serverComponentsExternalPackages
+    gzipSize: false, // Disable gzip size calculation to save memory
+    turbo: {
+      // Updated from loaders to rules
+      rules: {
+        '*.svg': ['@svgr/webpack'],
+      },
+    },
   },
   // The ESLint config error is caused by these options
   // Disable ESLint during build to fix deployment issue
@@ -40,6 +56,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  // Add memory optimizations for production
+  // swcMinify is now the default in Next.js 15, so it can be removed
+  poweredByHeader: false, // Remove unnecessary header
+  output: 'standalone', // Creates a standalone build with minimal dependencies
+  compress: true, // Enable compression
   headers: async () => {
     return [
       {
@@ -95,36 +116,77 @@ const nextConfig = {
   webpack: (config, { dev, isServer }) => {
     // Only optimize in production builds
     if (!dev) {
+      // Add TerserPlugin options for better minification
+      config.optimization.minimizer.forEach((minimizer) => {
+        if (minimizer.constructor.name === 'TerserPlugin') {
+          minimizer.options.terserOptions.compress.drop_console = true;
+          minimizer.options.terserOptions.compress.drop_debugger = true;
+          minimizer.options.terserOptions.compress.pure_funcs = [
+            'console.log',
+            'console.info',
+            'console.debug',
+            'console.warn'
+          ];
+        }
+      });
+
       // Optimize client-side bundles
       config.optimization.splitChunks = {
         chunks: 'all',
-        minSize: 20000,
-        maxSize: 150000, // Reduced from 240000 to 150000
-        minChunks: 1,
-        maxAsyncRequests: 30,
-        maxInitialRequests: 30,
+        minSize: 10000, // Reduced from 20000 to 10000
+        maxSize: 120000, // Reduced from 150000 to 120000
+        minChunks: 2,
+        maxAsyncRequests: 20,
+        maxInitialRequests: 20,
+        automaticNameDelimiter: '~',
         cacheGroups: {
-          defaultVendors: {
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
+          framework: {
+            name: 'framework',
+            test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|next|scheduler)[\\/]/,
+            priority: 40,
             reuseExistingChunk: true,
+          },
+          libs: {
+            test: /[\\/]node_modules[\\/](!react|!react-dom|!scheduler|!next)[\\/]/,
             name(module) {
-              // Get the package name
               const packageName = module.context.match(
                 /[\\/]node_modules[\\/](.*?)([\\/]|$)/
               )[1];
               
-              // Group common packages together
-              if (packageName.includes('react') || packageName.includes('next')) {
-                return 'react-vendor';
+              // Specific bundling for heavy packages
+              if (packageName.includes('framer-motion')) {
+                return 'animations-vendor';
+              }
+              
+              if (packageName.includes('axios') || packageName.includes('http')) {
+                return 'http-vendor';
               }
               
               if (packageName.includes('@radix-ui')) {
-                return 'radix-vendor';
+                return 'ui-components-vendor';
               }
               
-              return `vendor-${packageName.replace('@', '')}`;
+              if (packageName.includes('lodash')) {
+                return 'utilities-vendor';
+              }
+              
+              if (packageName.includes('react-hook-form') || packageName.includes('zod')) {
+                return 'form-vendor';
+              }
+              
+              // Fallback to the package name for other packages
+              return `npm.${packageName.replace('@', '')}`;
             },
+            priority: 20,
+            reuseExistingChunk: true,
+            minSize: 10000,
+            maxSize: 100000,
+          },
+          commons: {
+            name: 'commons',
+            minChunks: 3,
+            priority: 10,
+            reuseExistingChunk: true,
           },
           default: {
             minChunks: 2,

@@ -42,10 +42,54 @@ services:
     name: wccis-frontend
     runtime: node
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    # Optimize the build process and clean up unnecessary files
+    buildCommand: >
+      npm ci --no-optional --no-audit --prefer-offline &&
+      npm run build:optimized &&
+      npm prune --production &&
+      rm -rf .next/cache
+    # More fine-tuned Node options for memory efficiency
+    startCommand: >
+      NODE_OPTIONS="--max-old-space-size=512 
+      --optimize-for-size
+      --no-lazy
+      --gc-interval=100
+      --max-semi-space-size=16
+      --max-old-space-size=512
+      --max-executable-size=48" npm run start
+    # Add plan with memory specifications
+    plan: starter
+    # Clean npm cache during build to reduce memory usage
+    buildFilter:
+      paths:
+        - frontend/src/**
+        - frontend/public/**
+        - frontend/package.json
+        - frontend/next.config.js
+    # Health check endpoint to monitor the service
+    healthCheckPath: /
+    # Autoscaling configuration
+    autoscaling:
+      minInstances: 1
+      maxInstances: 1
+      targetMemoryPercent: 80
+    # Cache configuration for static assets
+    disk:
+      name: node-cache
+      mountPath: /cache
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
         value: https://wccis-backend.onrender.com/api
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=512"
+      - key: NEXT_SHARP_PATH
+        value: /cache/node_modules/sharp
+      - key: NEXT_CACHE_DIR
+        value: /cache/.next
+      - key: npm_config_cache
+        value: /cache/npm

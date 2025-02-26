@@ -1,21 +1,51 @@
 // frontend/src/pages/_app.tsx
 import type { AppProps } from "next/app";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { DefaultSeo } from 'next-seo';
 import { Analytics } from '@vercel/analytics/react';
 import { initSmoothScrolling } from "@/utils/smoothScroll";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
+import { useRouter } from "next/router";
 
-// Loading fallback components
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div>Loading...</div>
+// Improved loading fallback component with progress animation
+const PageLoadingIndicator = () => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-900 bg-opacity-80 dark:bg-opacity-80 backdrop-blur-sm transition-opacity">
+    <div className="relative">
+      <div className="h-16 w-16 rounded-full border-t-4 border-b-4 border-blue-500 animate-spin"></div>
+      <div className="mt-4 text-center text-gray-600 dark:text-gray-300 font-medium">Loading page...</div>
+    </div>
   </div>
 );
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const [isRouteChanging, setIsRouteChanging] = useState(false);
+  const [loadingKey, setLoadingKey] = useState(0);
+
+  // Set up router events to show loading indicator
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setIsRouteChanging(true);
+      setLoadingKey(prev => prev + 1);
+    };
+
+    const handleRouteChangeComplete = () => {
+      setIsRouteChanging(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+    router.events.on('routeChangeError', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+      router.events.off('routeChangeError', handleRouteChangeComplete);
+    };
+  }, [router.events]);
+
   // Initialize smooth scrolling
   useEffect(() => {
     // Set HTML element class for smooth scrolling
@@ -52,6 +82,20 @@ function MyApp({ Component, pageProps }: AppProps) {
     return addScrollProgressIndicator();
   }, []);
 
+  // Prefetch common routes during idle time
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      // @ts-ignore - requestIdleCallback might not be typed
+      window.requestIdleCallback(() => {
+        // Prefetch popular routes to improve navigation experience
+        router.prefetch('/insurance/general-liability-quote');
+        router.prefetch('/insurance/commercial-auto-quote');
+        router.prefetch('/insurance/workers-comp-quote');
+        router.prefetch('/contact');
+      });
+    }
+  }, [router]);
+
   return (
     <>
       <DefaultSeo 
@@ -65,7 +109,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       />
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
+        {isRouteChanging && <PageLoadingIndicator key={loadingKey} />}
+        <Suspense fallback={<PageLoadingIndicator />}>
           <Component {...pageProps} />
         </Suspense>
       </ErrorBoundary>

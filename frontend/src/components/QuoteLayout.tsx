@@ -1,8 +1,8 @@
 import React from "react";
 import { Shield, Clock, FileText, Phone } from "lucide-react";
 import { Background } from "./Background";
-import { WhyChooseUs } from "./WhyChooseUs";
-import { ContactInfo } from "./ContactInfo";
+import { WhyChooseUs, ContactInfo } from "./lazy-components";
+import { LazyLoadWrapper } from "@/utils/lazy-load";
 
 interface QuoteLayoutProps {
   children: React.ReactNode;
@@ -11,6 +11,14 @@ interface QuoteLayoutProps {
   error?: string;
   success?: string;
 }
+
+// Simple loading skelton for side components
+const SideSkeleton = () => (
+  <div className="space-y-3 animate-pulse">
+    <div className="h-40 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+    <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+  </div>
+);
 
 const QuoteLayout = React.memo(({ 
   children, 
@@ -42,13 +50,19 @@ const QuoteLayout = React.memo(({
 
           {/* Side Info */}
           <div className="space-y-6">
-            <WhyChooseUs />
-            <ContactInfo />
+            <LazyLoadWrapper fallback={<SideSkeleton />}>
+              <div className="space-y-6">
+                <WhyChooseUs />
+                <ContactInfo />
+              </div>
+            </LazyLoadWrapper>
           </div>
         </div>
       </div>
     </div>
   );
 });
+
+QuoteLayout.displayName = 'QuoteLayout';
 
 export default QuoteLayout;

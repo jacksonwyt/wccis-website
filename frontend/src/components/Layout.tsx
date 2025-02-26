@@ -1,15 +1,25 @@
 // src/components/Layout.tsx
-// src/components/Layout.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
-import Header from "./Header";
-import Footer from "./Footer";
+import { Header, Footer } from "./lazy-components";
+import { LazyLoadWrapper } from "@/utils/lazy-load";
+
 interface LayoutProps {
   title?: string;
   description?: string;
   children: React.ReactNode;
   pageType?: 'home' | 'insurance' | 'info';
 }
+
+// Simple loading component for the header
+const HeaderSkeleton = () => (
+  <div className="h-16 w-full bg-white/80 dark:bg-gray-900/80 animate-pulse"></div>
+);
+
+// Simple loading component for the footer
+const FooterSkeleton = () => (
+  <div className="h-40 w-full bg-white/80 dark:bg-gray-900/80 animate-pulse"></div>
+);
 
 const Layout: React.FC<LayoutProps> = ({ 
   title = "WCCIS", 
@@ -20,6 +30,18 @@ const Layout: React.FC<LayoutProps> = ({
   const getAnimationClass = () => {
     return ''; // Removed animations as requested
   };
+
+  // Prefetch heavy components on idle
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      // @ts-ignore - requestIdleCallback might not be typed
+      window.requestIdleCallback(() => {
+        // This will trigger the dynamic imports to be downloaded in the background
+        import('./Header').catch(() => {});
+        import('./Footer').catch(() => {});
+      });
+    }
+  }, []);
 
   return (
     <div className="min-h-screen relative bg-gradient-to-b from-white via-brand-light/5 to-brand-light/20 dark:from-gray-900 dark:via-gray-800/95 dark:to-gray-800/90">
@@ -65,7 +87,9 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Glass Header */}
       <div className="sticky top-0 z-50">
         <div className="backdrop-blur-md bg-gradient-to-b from-white/80 to-white/70 dark:from-gray-900/80 dark:to-gray-900/70 border-b border-brand-light/10 shadow-sm">
-          <Header />
+          <LazyLoadWrapper fallback={<HeaderSkeleton />}>
+            <Header />
+          </LazyLoadWrapper>
         </div>
       </div>
 
@@ -77,7 +101,9 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Glass Footer */}
       <div className="relative z-10 mt-auto">
         <div className="backdrop-blur-md bg-gradient-to-t from-white/80 to-white/70 dark:from-gray-900/80 dark:to-gray-900/70 border-t border-brand-light/10">
-          <Footer />
+          <LazyLoadWrapper fallback={<FooterSkeleton />}>
+            <Footer />
+          </LazyLoadWrapper>
         </div>
       </div>
     </div>
