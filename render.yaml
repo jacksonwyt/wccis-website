@@ -24,7 +24,7 @@ services:
   - type: web
     name: wccis-frontend
     runtime: node
-    nodeVersion: 22.12.0
+    plan: starter
     rootDir: frontend
     # Enhanced build process to fix webpack bundle5 issue
     buildCommand: >
@@ -47,7 +47,6 @@ services:
       PORT=10000 
       node .next/standalone/server.js
     # Add plan with memory specifications
-    plan: starter
     # Cache configuration for static assets
     disk:
       name: node-cache
