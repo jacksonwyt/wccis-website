@@ -11,6 +11,7 @@
     "build:analyze": "ANALYZE=true next build",
     "build:optimized": "NODE_ENV=production NODE_OPTIONS='--max-old-space-size=512' next build",
     "start:standalone": "NODE_ENV=production node .next/standalone/server.js",
+    "start:custom": "NODE_ENV=production node server.js",
     "cleanup": "rm -rf .next/cache",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",

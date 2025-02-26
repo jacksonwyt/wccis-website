@@ -25,17 +25,22 @@ services:
     name: wccis-frontend
     runtime: node
     rootDir: frontend
-    # Optimized build process for better handling of dynamic imports
+    # Comprehensive build process with proper file copying and environment setup
     buildCommand: >
       npm ci --no-optional --no-audit --prefer-offline &&
-      NODE_OPTIONS='--max-old-space-size=512' ./node_modules/.bin/next build &&
+      NODE_ENV=production NEXT_PUBLIC_API_URL=https://wccis.com/api NEXT_PUBLIC_SITE_URL=https://wccis.com ./node_modules/.bin/next build &&
       cp -r public .next/standalone/ &&
       cp -r .next/static .next/standalone/.next/ &&
       cp -r .next/server .next/standalone/.next/ &&
+      cp server.js .next/standalone/ &&
       npm prune --production
-    # Using the standalone server to avoid TypeErrors with dynamic imports
+    # Use custom server.js for better error handling and static file serving
     startCommand: >
-      NODE_ENV=production node .next/standalone/server.js
+      NODE_ENV=production 
+      NEXT_PUBLIC_API_URL=https://wccis.com/api 
+      NEXT_PUBLIC_SITE_URL=https://wccis.com 
+      PORT=10000 
+      node .next/standalone/server.js
     # Add plan with memory specifications
     plan: starter
     # Cache configuration for static assets
@@ -48,9 +53,13 @@ services:
         value: production
       - key: NEXT_PUBLIC_API_URL
         value: https://wccis.com/api
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://wccis.com
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
       - key: PORT 
         value: "10000"
       - key: NODE_OPTIONS
         value: "--max-old-space-size=512"
+      - key: NEXT_SHARP_PATH
+        value: "./node_modules/sharp"

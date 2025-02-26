@@ -61,6 +61,9 @@ const nextConfig = {
   compress: true, // Enable compression
   // Static optimization improvements
   staticPageGenerationTimeout: 120,
+  // Ensure proper handling of public directory
+  assetPrefix: process.env.NEXT_PUBLIC_SITE_URL || '',
+  // Improved headers for caching and security
   headers: async () => {
     return [
       {
@@ -68,7 +71,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=3600, s-maxage=86400', // 1 hour client, 1 day CDN
           },
           {
             key: 'Strict-Transport-Security',
@@ -97,6 +100,12 @@ const nextConfig = {
       },
       {
         source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+        ],
+      },
+      {
+        source: '/static/:path*',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
         ],
@@ -166,6 +175,22 @@ const nextConfig = {
       config.output.chunkFilename = dev
         ? '[name].js'
         : '[name].[contenthash].js';
+    }
+
+    // Ensure proper handling of static assets
+    if (isServer) {
+      // Ensure proper handling of sharp for image optimization
+      if (config.externals) {
+        const externals = config.externals.map((external) => {
+          if (typeof external !== 'function') return external;
+          return (ctx, req, cb) => {
+            return req.startsWith('sharp') 
+              ? cb(null, `commonjs ${req}`)
+              : external(ctx, req, cb);
+          };
+        });
+        config.externals = externals;
+      }
     }
 
     return config;
