@@ -130,14 +130,14 @@ const nextConfig = {
         }
       });
 
-      // Optimize client-side bundles
+      // Optimize client-side bundles - simplified for better stability
       config.optimization.splitChunks = {
         chunks: 'all',
-        minSize: 10000, // Reduced from 20000 to 10000
-        maxSize: 120000, // Reduced from 150000 to 120000
+        minSize: 20000,
+        maxSize: 90000, // Reduced from 120000 to 90000 for better memory usage
         minChunks: 2,
-        maxAsyncRequests: 20,
-        maxInitialRequests: 20,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 25,
         automaticNameDelimiter: '~',
         cacheGroups: {
           framework: {
@@ -145,42 +145,6 @@ const nextConfig = {
             test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|next|scheduler)[\\/]/,
             priority: 40,
             reuseExistingChunk: true,
-          },
-          libs: {
-            test: /[\\/]node_modules[\\/](!react|!react-dom|!scheduler|!next)[\\/]/,
-            name(module) {
-              const packageName = module.context.match(
-                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-              )[1];
-              
-              // Specific bundling for heavy packages
-              if (packageName.includes('framer-motion')) {
-                return 'animations-vendor';
-              }
-              
-              if (packageName.includes('axios') || packageName.includes('http')) {
-                return 'http-vendor';
-              }
-              
-              if (packageName.includes('@radix-ui')) {
-                return 'ui-components-vendor';
-              }
-              
-              if (packageName.includes('lodash')) {
-                return 'utilities-vendor';
-              }
-              
-              if (packageName.includes('react-hook-form') || packageName.includes('zod')) {
-                return 'form-vendor';
-              }
-              
-              // Fallback to the package name for other packages
-              return `npm.${packageName.replace('@', '')}`;
-            },
-            priority: 20,
-            reuseExistingChunk: true,
-            minSize: 10000,
-            maxSize: 100000,
           },
           commons: {
             name: 'commons',
@@ -195,6 +159,13 @@ const nextConfig = {
           },
         },
       };
+    }
+
+    // Add support for proper handling of dynamic imports
+    if (!isServer) {
+      config.output.chunkFilename = dev
+        ? '[name].js'
+        : '[name].[contenthash].js';
     }
 
     return config;

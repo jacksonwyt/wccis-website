@@ -25,14 +25,15 @@ services:
     name: wccis-frontend
     runtime: node
     rootDir: frontend
-    # Modified build process to fix standalone output issues
+    # Optimized build process for better handling of dynamic imports
     buildCommand: >
       npm ci --no-optional --no-audit --prefer-offline &&
       NODE_OPTIONS='--max-old-space-size=512' ./node_modules/.bin/next build &&
       cp -r public .next/standalone/ &&
       cp -r .next/static .next/standalone/.next/ &&
+      cp -r .next/server .next/standalone/.next/ &&
       npm prune --production
-    # Modified start command to correctly serve static files
+    # Using the standalone server to avoid TypeErrors with dynamic imports
     startCommand: >
       NODE_ENV=production node .next/standalone/server.js
     # Add plan with memory specifications

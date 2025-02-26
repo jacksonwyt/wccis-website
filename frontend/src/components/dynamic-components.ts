@@ -18,25 +18,25 @@ export const Footer = dynamic(() => import('./Footer'), {
   ssr: true
 });
 
-// UI components with named exports - using properly typed loading spinner
+// UI components with named exports - using correct pattern for named exports
 export const GlassCard = dynamic(
-  () => import('./ui/GlassCard').then(mod => ({ default: mod.GlassCard })),
+  () => import('./ui/GlassCard').then(mod => mod.GlassCard),
   { loading: DefaultLoadingSpinner }
 );
 
 export const Card = dynamic(
-  () => import('./ui/Card').then(mod => ({ default: mod.Card })),
+  () => import('./ui/Card').then(mod => mod.Card),
   { loading: DefaultLoadingSpinner }
 );
 
 export const FormLayout = dynamic(
-  () => import('./ui/FormLayout').then(mod => ({ default: mod.FormLayout })),
+  () => import('./ui/FormLayout').then(mod => mod.FormLayout),
   { loading: DefaultLoadingSpinner }
 );
 
 // Form components
 export const DynamicForm = dynamic(
-  () => import('./DynamicForm').then(mod => ({ default: mod.DynamicForm })),
+  () => import('./DynamicForm').then(mod => mod.DynamicForm),
   { loading: FormSkeletonLoader, ssr: false }
 );
 
@@ -50,6 +50,6 @@ export const ContactInfo = dynamic(() => import('./ContactInfo'), {
 });
 
 export const AnimatedSection = dynamic(
-  () => import('./AnimatedSection').then(mod => ({ default: mod.AnimatedSection })),
+  () => import('./AnimatedSection').then(mod => mod.AnimatedSection),
   { loading: DefaultLoadingSpinner }
 ); 
