@@ -24,15 +24,23 @@ services:
   - type: web
     name: wccis-frontend
     runtime: node
+    nodeVersion: 18
     rootDir: frontend
-    # Comprehensive build process with proper file copying and environment setup
+    # Simplified build process to avoid webpack issues
     buildCommand: >
       npm ci --no-optional --no-audit --prefer-offline &&
-      NODE_ENV=production NEXT_PUBLIC_API_URL=https://wccis.com/api NEXT_PUBLIC_SITE_URL=https://wccis.com ./node_modules/.bin/next build &&
+      NODE_ENV=production 
+      NEXT_PUBLIC_API_URL=https://wccis.com/api 
+      NEXT_PUBLIC_SITE_URL=https://wccis.com 
+      NODE_OPTIONS='--max-old-space-size=512' 
+      npm run build &&
       cp -r public .next/standalone/ &&
       cp -r .next/static .next/standalone/.next/ &&
       cp -r .next/server .next/standalone/.next/ &&
       cp server.js .next/standalone/ &&
+      cp test-server.js .next/standalone/ &&
+      cp standalone-package.json .next/standalone/package.json &&
+      cd .next/standalone && npm install --production --no-optional sharp && cd ../.. &&
       npm prune --production
     # Use custom server.js for better error handling and static file serving
     startCommand: >
@@ -40,6 +48,7 @@ services:
       NEXT_PUBLIC_API_URL=https://wccis.com/api 
       NEXT_PUBLIC_SITE_URL=https://wccis.com 
       PORT=10000 
+      node .next/standalone/test-server.js && 
       node .next/standalone/server.js
     # Add plan with memory specifications
     plan: starter

@@ -177,19 +177,14 @@ const nextConfig = {
         : '[name].[contenthash].js';
     }
 
-    // Ensure proper handling of static assets
+    // Simplified handling of sharp for image optimization
     if (isServer) {
-      // Ensure proper handling of sharp for image optimization
-      if (config.externals) {
-        const externals = config.externals.map((external) => {
-          if (typeof external !== 'function') return external;
-          return (ctx, req, cb) => {
-            return req.startsWith('sharp') 
-              ? cb(null, `commonjs ${req}`)
-              : external(ctx, req, cb);
-          };
-        });
-        config.externals = externals;
+      // Add sharp as an external dependency without complex logic
+      const { externals = [] } = config;
+      if (Array.isArray(externals)) {
+        config.externals = [...externals, 'sharp'];
+      } else {
+        config.externals = [externals, 'sharp'];
       }
     }
 
