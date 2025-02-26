@@ -14,9 +14,7 @@ const security_1 = require("./middleware/security");
 dotenv_1.default.config();
 // Import routes
 const health_1 = __importDefault(require("./routes/health"));
-const insure_1 = __importDefault(require("./routes/insure"));
 const blog_1 = __importDefault(require("./routes/blog"));
-const contact_1 = __importDefault(require("./routes/contact"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
 // Enhanced CORS configuration
@@ -48,9 +46,7 @@ app.use((0, compression_1.default)({
 (0, security_1.configureSecurityMiddleware)(app);
 // Routes
 app.use('/api/health', health_1.default);
-app.use('/api/insure', insure_1.default);
 app.use('/api/blog', blog_1.default);
-app.use('/api/contact', contact_1.default);
 // Error handling middleware should be after routes
 app.use(errorHandler_1.errorHandler);
 // Handle unhandled routes

@@ -49,14 +49,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-export const submitQuoteRequest = async <T>(data: T): Promise<ApiResponse> => {
-  const response = await apiClient.post('/insure', data);
-  return response.data;
-};
-
-export const submitContactForm = async <T>(data: T): Promise<ApiResponse> => {
-  const response = await apiClient.post('/contact', data);
-  return response.data;
-};
+// Note: The submitQuoteRequest and submitContactForm functions have been removed
+// as they're no longer needed with the email client approach
 
 export { apiClient };

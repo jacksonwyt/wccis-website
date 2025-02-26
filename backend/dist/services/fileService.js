@@ -9,11 +9,9 @@ const sharp_1 = __importDefault(require("sharp"));
 const client_s3_1 = require("@aws-sdk/client-s3");
 const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const logger_1 = require("../utils/logger");
-const ioredis_1 = __importDefault(require("ioredis"));
 const zlib_1 = __importDefault(require("zlib"));
 const util_1 = require("util");
 const gzip = (0, util_1.promisify)(zlib_1.default.gzip);
-const CACHE_TTL = 3600; // 1 hour in seconds
 class FileService {
     constructor() {
         this.MAX_RETRIES = 3;
@@ -25,7 +23,6 @@ class FileService {
             }
         });
         this.bucket = process.env.AWS_S3_BUCKET || 'wccis-files';
-        this.redis = new ioredis_1.default(process.env.REDIS_URL || 'redis://localhost:6379');
     }
     async compressFile(buffer) {
         return gzip(buffer);
@@ -57,19 +54,11 @@ class FileService {
     }
     async getSignedUrl(fileName, expiresIn = 3600) {
         try {
-            const cacheKey = `signed-url:${fileName}`;
-            // Check cache first
-            const cachedUrl = await this.redis.get(cacheKey);
-            if (cachedUrl) {
-                return cachedUrl;
-            }
             const command = new client_s3_1.GetObjectCommand({
                 Bucket: this.bucket,
                 Key: fileName
             });
             const url = await (0, s3_request_presigner_1.getSignedUrl)(this.s3Client, command, { expiresIn });
-            // Cache the URL
-            await this.redis.set(cacheKey, url, 'EX', Math.min(expiresIn, CACHE_TTL));
             return url;
         }
         catch (error) {

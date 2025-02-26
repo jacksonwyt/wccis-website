@@ -2,29 +2,11 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from './baseController';
 import { AppError } from '../types/errors';
-import { getCache, setCache } from '../utils/redis';
 import { logger } from '../utils/logger';
-
-// Cache keys
-const BLOG_POSTS_CACHE_KEY = 'blog:posts:all';
-const BLOG_POST_CACHE_PREFIX = 'blog:post:';
-
-// Cache TTLs (in seconds)
-const POSTS_CACHE_TTL = 3600; // 1 hour
-const POST_CACHE_TTL = 86400; // 24 hours
 
 // Get all blog posts (with optional filtering/pagination)
 export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
-  // Try to get from cache first
-  const cachedPosts = await getCache(BLOG_POSTS_CACHE_KEY);
-  
-  if (cachedPosts) {
-    logger.debug('Cache hit for blog posts');
-    return res.status(200).json(JSON.parse(cachedPosts));
-  }
-  
-  // Cache miss, fetch from database
-  logger.debug('Cache miss for blog posts');
+  logger.debug('Fetching blog posts');
   
   // Placeholder data
   const blogPosts = [
@@ -40,9 +22,6 @@ export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
       posts: blogPosts
     }
   };
-  
-  // Cache the response
-  await setCache(BLOG_POSTS_CACHE_KEY, JSON.stringify(response), POSTS_CACHE_TTL);
 
   res.status(200).json(response);
 });
@@ -55,17 +34,7 @@ export const getPostBySlug = asyncHandler(async (req: Request, res: Response) =>
     throw new AppError(400, 'error', 'Post slug is required');
   }
   
-  // Try to get from cache first
-  const cacheKey = `${BLOG_POST_CACHE_PREFIX}${slug}`;
-  const cachedPost = await getCache(cacheKey);
-  
-  if (cachedPost) {
-    logger.debug('Cache hit for blog post', { slug });
-    return res.status(200).json(JSON.parse(cachedPost));
-  }
-  
-  // Cache miss, fetch from database
-  logger.debug('Cache miss for blog post', { slug });
+  logger.debug('Fetching blog post', { slug });
 
   // Placeholder data
   const post = {
@@ -84,9 +53,6 @@ export const getPostBySlug = asyncHandler(async (req: Request, res: Response) =>
       post
     }
   };
-  
-  // Cache the response
-  await setCache(cacheKey, JSON.stringify(response), POST_CACHE_TTL);
 
   res.status(200).json(response);
 });

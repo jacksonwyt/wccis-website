@@ -4,20 +4,16 @@ import PDFDocument from 'pdfkit';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { logger } from '../utils/logger';
-import Redis from 'ioredis';
 import zlib from 'zlib';
 import { promisify } from 'util';
 import retry from 'async-retry';
 import { Express } from 'express';
 
 const gzip = promisify(zlib.gzip);
-const CACHE_TTL = 3600; // 1 hour in seconds
-
 
 class FileService {
   private s3Client: S3Client;
   private bucket: string;
-  private redis: Redis;
   private readonly MAX_RETRIES = 3;
 
   constructor() {
@@ -29,7 +25,6 @@ class FileService {
       }
     });
     this.bucket = process.env.AWS_S3_BUCKET || 'wccis-files';
-    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
   }
 
   private async compressFile(buffer: Buffer): Promise<Buffer> {
@@ -67,24 +62,12 @@ class FileService {
 
   async getSignedUrl(fileName: string, expiresIn = 3600): Promise<string> {
     try {
-      const cacheKey = `signed-url:${fileName}`;
-      
-      // Check cache first
-      const cachedUrl = await this.redis.get(cacheKey);
-      if (cachedUrl) {
-        return cachedUrl;
-      }
-
       const command = new GetObjectCommand({
         Bucket: this.bucket,
         Key: fileName
       });
 
       const url = await getSignedUrl(this.s3Client, command, { expiresIn });
-      
-      // Cache the URL
-      await this.redis.set(cacheKey, url, 'EX', Math.min(expiresIn, CACHE_TTL));
-      
       return url;
     } catch (error) {
       logger.error('Error generating signed URL', { error });

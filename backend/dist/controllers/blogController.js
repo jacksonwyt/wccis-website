@@ -3,24 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscribeToUpdates = exports.getPostBySlug = exports.getAllPosts = void 0;
 const baseController_1 = require("./baseController");
 const errors_1 = require("../types/errors");
-const redis_1 = require("../utils/redis");
 const logger_1 = require("../utils/logger");
-// Cache keys
-const BLOG_POSTS_CACHE_KEY = 'blog:posts:all';
-const BLOG_POST_CACHE_PREFIX = 'blog:post:';
-// Cache TTLs (in seconds)
-const POSTS_CACHE_TTL = 3600; // 1 hour
-const POST_CACHE_TTL = 86400; // 24 hours
 // Get all blog posts (with optional filtering/pagination)
 exports.getAllPosts = (0, baseController_1.asyncHandler)(async (req, res) => {
-    // Try to get from cache first
-    const cachedPosts = await (0, redis_1.getCache)(BLOG_POSTS_CACHE_KEY);
-    if (cachedPosts) {
-        logger_1.logger.debug('Cache hit for blog posts');
-        return res.status(200).json(JSON.parse(cachedPosts));
-    }
-    // Cache miss, fetch from database
-    logger_1.logger.debug('Cache miss for blog posts');
+    logger_1.logger.debug('Fetching blog posts');
     // Placeholder data
     const blogPosts = [
         { id: 1, title: 'Understanding Workers Compensation Insurance', slug: 'understanding-workers-comp' },
@@ -34,8 +20,6 @@ exports.getAllPosts = (0, baseController_1.asyncHandler)(async (req, res) => {
             posts: blogPosts
         }
     };
-    // Cache the response
-    await (0, redis_1.setCache)(BLOG_POSTS_CACHE_KEY, JSON.stringify(response), POSTS_CACHE_TTL);
     res.status(200).json(response);
 });
 // Get a single blog post by slug
@@ -44,15 +28,7 @@ exports.getPostBySlug = (0, baseController_1.asyncHandler)(async (req, res) => {
     if (!slug) {
         throw new errors_1.AppError(400, 'error', 'Post slug is required');
     }
-    // Try to get from cache first
-    const cacheKey = `${BLOG_POST_CACHE_PREFIX}${slug}`;
-    const cachedPost = await (0, redis_1.getCache)(cacheKey);
-    if (cachedPost) {
-        logger_1.logger.debug('Cache hit for blog post', { slug });
-        return res.status(200).json(JSON.parse(cachedPost));
-    }
-    // Cache miss, fetch from database
-    logger_1.logger.debug('Cache miss for blog post', { slug });
+    logger_1.logger.debug('Fetching blog post', { slug });
     // Placeholder data
     const post = {
         id: 1,
@@ -69,8 +45,6 @@ exports.getPostBySlug = (0, baseController_1.asyncHandler)(async (req, res) => {
             post
         }
     };
-    // Cache the response
-    await (0, redis_1.setCache)(cacheKey, JSON.stringify(response), POST_CACHE_TTL);
     res.status(200).json(response);
 });
 // Subscribe to blog updates

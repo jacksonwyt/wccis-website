@@ -6,20 +6,16 @@ import * as z from 'zod';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
 import { FormLayout } from '@/components/ui/FormLayout';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import FormSkeleton from '@/components/FormSkeleton';
 
-// Schema definition
+// Schema definition - remove file validation requirements
 const commercialAutoQuoteSchema = z.object({
   businessName: z.string().min(1, "Business name is required"),
   name: z.string().min(1, "Contact name is required"),
   email: z.string().email("Invalid email").min(1, "Email is required"),
   phone: z.string().min(1, "Phone is required"),
-  driversLicenses: z.any()
-    .refine((files: FileList | null) => files && files.length > 0, "Drivers license documents are required"),
-  vehicleRegistrations: z.any()
-    .refine((files: FileList | null) => files && files.length > 0, "Vehicle registration documents are required"),
   message: z.string().optional(),
 });
 
@@ -69,6 +65,11 @@ const CommercialAutoQuotePage = () => {
 Commercial Auto Quote Request
 
 ${formattedData}
+
+---
+IMPORTANT: Please attach the following documents to this email:
+1. Drivers license documents for all licensed drivers
+2. Vehicle registration documents
       `;
       
       // Create the mailto URL
@@ -77,7 +78,7 @@ ${formattedData}
       // Open the user's default email client
       window.open(mailtoURL, '_blank');
       
-      setSuccess('Your email client has been opened. Please send the email to complete your request.');
+      setSuccess('Your email client has been opened. Please send the email to complete your request. Remember to attach the required documents.');
       reset();
     } catch (error: any) {
       setError(error.message || 'An error occurred.');
@@ -112,6 +113,23 @@ ${formattedData}
             maxWidth="xl"
             className="mx-auto"
           >
+            {/* File requirement notice */}
+            <div className="mb-6 p-4 bg-blue-900/30 border border-blue-700/30 rounded-md">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="text-blue-300 font-medium mb-1">Required Documents</h3>
+                  <p className="text-blue-200 text-sm">
+                    After submitting this form, your email client will open. Please attach the following documents to your email:
+                  </p>
+                  <ul className="list-disc list-inside text-blue-200 text-sm mt-2 ml-2">
+                    <li>Copies of drivers licenses for all licensed drivers</li>
+                    <li>Copies of vehicle registrations</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-4">
                 <div>
@@ -176,46 +194,6 @@ ${formattedData}
                   {errors.phone?.message && (
                     <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>
                   )}
-                </div>
-                
-                <div>
-                  <label className="block text-gray-200 font-medium mb-2" htmlFor="driversLicenses">
-                    Drivers License Documents (Required)
-                  </label>
-                  <input
-                    id="driversLicenses"
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    {...register('driversLicenses')}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  {errors.driversLicenses?.message && (
-                    <p className="text-red-400 text-sm mt-1">{String(errors.driversLicenses.message)}</p>
-                  )}
-                  <p className="text-sm text-gray-400 mt-1">
-                    Please upload copies of drivers licenses for all licensed drivers
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-gray-200 font-medium mb-2" htmlFor="vehicleRegistrations">
-                    Vehicle Registration Documents (Required)
-                  </label>
-                  <input
-                    id="vehicleRegistrations"
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    {...register('vehicleRegistrations')}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  {errors.vehicleRegistrations?.message && (
-                    <p className="text-red-400 text-sm mt-1">{String(errors.vehicleRegistrations.message)}</p>
-                  )}
-                  <p className="text-sm text-gray-400 mt-1">
-                    Please upload copies of vehicle registrations
-                  </p>
                 </div>
 
                 <div>
