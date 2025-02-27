@@ -14,7 +14,7 @@ const limits = {
 const storage = multer.memoryStorage();
 
 // Supported file types
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (req: Request, file: multer.File, cb: multer.FileFilterCallback) => {
   // Allow all images
   if (file.mimetype.startsWith('image/')) {
     return cb(null, true);
