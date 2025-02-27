@@ -10,7 +10,10 @@ class AppError extends Error {
         this.code = code;
         this.errors = errors;
         this.name = 'AppError';
-        Error.captureStackTrace(this, this.constructor);
+        // Fix for TypeScript error - ensure captureStackTrace exists
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
     }
     static badRequest(message, code) {
         return new AppError(400, 'error', message, code);

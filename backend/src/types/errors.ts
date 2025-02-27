@@ -9,7 +9,10 @@ export class AppError extends Error {
   ) {
     super(message);
     this.name = 'AppError';
-    Error.captureStackTrace(this, this.constructor);
+    // Fix for TypeScript error - ensure captureStackTrace exists
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 
   static badRequest(message: string, code?: string) {

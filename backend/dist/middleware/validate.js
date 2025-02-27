@@ -1,18 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validate = void 0;
-const zod_1 = require("zod");
 const errors_1 = require("../types/errors");
-const validate = (schema) => async (req, res, next) => {
-    try {
-        await schema.parseAsync(req.body);
-        return next();
-    }
-    catch (error) {
-        if (error instanceof zod_1.ZodError) {
-            return next(errors_1.AppError.validation(error.errors));
+const validate = (schema) => {
+    return (req, res, next) => {
+        try {
+            const result = schema.safeParse(req.body);
+            if (!result.success) {
+                const formattedErrors = result.error.format();
+                return next(errors_1.AppError.validation([formattedErrors]));
+            }
+            // Add the validated data to the request object
+            req.body = result.data;
+            next();
         }
-        return next(error);
-    }
+        catch (error) {
+            next(error);
+        }
+    };
 };
 exports.validate = validate;

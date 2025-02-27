@@ -1,32 +1,40 @@
 // backend/src/index.ts
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import fs from 'fs';
 import { errorHandler } from './middleware/errorHandler';
+import { logger } from './utils/logger';
+import { configureSecurity, requireHttps } from './middleware/security';
 
 // Load environment variables
 dotenv.config();
 
 // Import routes
-import healthRoutes from './routes/health';
+import routes from './routes';
 
+// Initialize express app
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Basic CORS configuration
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:10000',
-  credentials: true,
-};
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, '../logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
 
-// Basic middleware setup
-app.use(cors(corsOptions));
-app.use(express.json());
+// Apply security middleware (cors, helmet, rate limiting)
+app.use(requireHttps);
+app.use(...configureSecurity());
+
+// Parse request bodies
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// Routes - keeping only essential health check route
-app.use('/api/health', healthRoutes);
+// Mount all routes
+app.use('/api', routes);
 
 // Error handling middleware
 app.use(errorHandler as express.ErrorRequestHandler);
@@ -37,11 +45,12 @@ app.use('*', (req, res) => {
     status: 'error',
     error: {
       message: `Cannot find ${req.originalUrl} on this server`,
+      code: 'NOT_FOUND'
     },
   });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  logger.info(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
