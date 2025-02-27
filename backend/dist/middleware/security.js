@@ -5,18 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.configureSecurityMiddleware = void 0;
 // src/middleware/security.ts
-const csrf_csrf_1 = require("csrf-csrf");
+const csurf_1 = __importDefault(require("csurf"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const helmet_1 = __importDefault(require("helmet"));
-const { generateToken, doubleCsrfProtection } = (0, csrf_csrf_1.doubleCsrf)({
-    getSecret: () => process.env.CSRF_SECRET || 'your-secret-key',
-    cookieName: 'csrf-token',
-    cookieOptions: {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production'
-    }
-});
 const configureSecurityMiddleware = (app) => {
     // Basic security headers
     app.use((0, helmet_1.default)());
@@ -46,25 +37,32 @@ const configureSecurityMiddleware = (app) => {
     });
     // Apply form rate limiting to specific routes
     app.use(['/api/contact', '/api/insure'], formLimiter);
-    // CSRF Protection - exclude health check routes
-    app.use((req, res, next) => {
-        // Skip CSRF protection for health check routes
-        if (req.path === '/api/health' || req.path === '/api/health/') {
-            return next();
-        }
-        doubleCsrfProtection(req, res, next);
-    });
-    // Add CSRF token to response - exclude health check routes
-    app.use((req, res, next) => {
-        // Skip adding CSRF token for health check routes
-        if (req.path === '/api/health' || req.path === '/api/health/') {
-            return next();
-        }
-        res.cookie('XSRF-TOKEN', generateToken(req, res), {
+    // Create CSRF protection middleware
+    const csrfProtection = (0, csurf_1.default)({
+        cookie: {
+            key: '_csrf', // The name of the cookie to use
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
+            path: '/'
+        }
+    });
+    // CSRF protection middleware
+    app.use((req, res, next) => {
+        // Skip CSRF protection for health check routes and GET/HEAD requests
+        if (req.path === '/api/health' || req.path === '/api/health/' ||
+            req.method === 'GET' || req.method === 'HEAD') {
+            return next();
+        }
+        // Apply CSRF protection
+        csrfProtection(req, res, next);
+    });
+    // CSRF token generation route
+    app.get('/api/csrf', csrfProtection, (req, res) => {
+        return res.json({
+            status: 'success',
+            csrfToken: req.csrfToken()
         });
-        next();
     });
     return { formLimiter };
 };

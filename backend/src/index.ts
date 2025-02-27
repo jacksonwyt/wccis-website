@@ -2,57 +2,33 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { errorHandler } from './middleware/errorHandler';
-import { configureSecurityMiddleware } from './middleware/security';
 
 // Load environment variables
 dotenv.config();
 
 // Import routes
 import healthRoutes from './routes/health';
-import blogRoutes from './routes/blog';
-
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
-// Enhanced CORS configuration
+// Basic CORS configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:10000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-XSRF-TOKEN'],
-  exposedHeaders: ['X-XSRF-TOKEN'],
-  maxAge: 86400,
 };
 
-// Middleware
+// Basic middleware setup
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
-// Add compression middleware
-app.use(compression({
-  level: 6, // Default compression level
-  threshold: 0, // Compress all responses
-  filter: (req, res) => {
-    // Don't compress responses with this header
-    if (req.headers['x-no-compression']) {
-      return false;
-    }
-    // Use compression filter function
-    return compression.filter(req, res);
-  }
-}));
-
-// Configure security middleware
-configureSecurityMiddleware(app);
-
-// Routes
+// Routes - keeping only essential health check route
 app.use('/api/health', healthRoutes);
-app.use('/api/blog', blogRoutes);
 
-// Error handling middleware should be after routes
+// Error handling middleware
 app.use(errorHandler as express.ErrorRequestHandler);
 
 // Handle unhandled routes

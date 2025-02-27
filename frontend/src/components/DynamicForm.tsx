@@ -30,6 +30,8 @@ interface DynamicFormProps {
   onSubmit: (data: Record<string, unknown>) => Promise<void>;
   submitLabel?: string;
   persistData?: boolean;
+  submitted?: boolean;
+  successMessage?: string;
 }
 
 // Memoized form field to prevent unnecessary re-renders
@@ -48,14 +50,16 @@ const MemoizedFormField = React.memo(
   )
 );
 
-export const DynamicForm: React.FC<DynamicFormProps> = React.memo(({
+export const DynamicForm = React.memo(({
   id,
   fields,
   schema,
   onSubmit,
   submitLabel = 'Submit',
   persistData = true,
-}) => {
+  submitted = false,
+  successMessage = 'Thank you for your submission',
+}: DynamicFormProps) => {
   const { setFormData, getFormData } = useFormStore();
   const [isFormReady, setIsFormReady] = useState(false);
   

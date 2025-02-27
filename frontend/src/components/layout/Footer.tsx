@@ -48,7 +48,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href={ROUTES.SERVICES} className="text-gray-600 hover:text-brand-primary dark:text-gray-300 dark:hover:text-brand-light">
+                <Link href="/insure" className="text-gray-600 hover:text-brand-primary dark:text-gray-300 dark:hover:text-brand-light">
                   Services
                 </Link>
               </li>
@@ -117,10 +117,10 @@ const Footer = () => {
               © {currentYear} WCCIS Insurance Agency. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <Link href={ROUTES.PRIVACY} className="text-gray-500 hover:text-brand-primary dark:text-gray-400 dark:hover:text-brand-light text-sm">
+              <Link href="/privacy" className="text-gray-500 hover:text-brand-primary dark:text-gray-400 dark:hover:text-brand-light text-sm">
                 Privacy Policy
               </Link>
-              <Link href={ROUTES.TERMS} className="text-gray-500 hover:text-brand-primary dark:text-gray-400 dark:hover:text-brand-light text-sm">
+              <Link href="/terms" className="text-gray-500 hover:text-brand-primary dark:text-gray-400 dark:hover:text-brand-light text-sm">
                 Terms of Service
               </Link>
             </div>
