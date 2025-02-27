@@ -1,3 +1,4 @@
+// frontend/src/pages/contact.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -24,27 +25,12 @@ const ContactPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Format the message body
-    const body = `
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone || 'Not provided'}
-Message:
-${formData.message}
-    `;
-    
-    // Create the mailto URL
-    const mailtoURL = `mailto:info@wccis.com?subject=Contact Form from ${formData.name}&body=${encodeURIComponent(body)}`;
-    
-    // Open the user's default email client
-    window.open(mailtoURL, '_blank');
-    
+    // Submit form data to your backend here
+    console.log('Form submitted:', formData);
     // Reset form
     setFormData({ name: '', email: '', phone: '', message: '' });
-    
     // Show success message
-    alert('Your email client has been opened. Please send the email to complete your message.');
+    alert('Message sent successfully! We will get back to you soon.');
   };
 
   return (
@@ -247,10 +233,10 @@ ${formData.message}
         <div className="container mx-auto px-4 relative">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Need Insurance Coverage?
+              Need Insurance Right Away?
             </h2>
             <p className="text-gray-200 text-lg mb-8">
-              Check out our specialized insurance options for contractors and businesses.
+              Get a fast, free quote online now. Our team is ready to help with all your insurance needs.
             </p>
             <Button
               variant="primary"
@@ -259,7 +245,7 @@ ${formData.message}
               rightIcon={<ArrowRight className="w-5 h-5" />}
               className="transition-transform duration-200 hover:translate-x-1 text-lg px-8 py-6"
             >
-              Explore Insurance Options
+              Get Your Quote Now
             </Button>
           </div>
         </div>
@@ -268,4 +254,4 @@ ${formData.message}
   );
 };
 
-export default ContactPage; 
+export default ContactPage;

@@ -1,5 +1,5 @@
 // frontend/src/pages/index.tsx
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 
 import Layout from "@/components/Layout";
@@ -8,23 +8,10 @@ import { Button } from "@/components/ui/Button";
 import { ArrowRight, Shield, Scale, ThumbsUp, ChevronRight } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
 import { getImageProps } from "@/utils/image-config";
-import { prefetchResources, commonImports } from "@/utils/prefetcher";
 
 const HomePage = () => {
   const router = useRouter();
 
-  // Prefetch key resources during idle time to improve performance
-  useEffect(() => {
-    // Prefetch layout components that will be needed on all pages
-    prefetchResources(commonImports.layout);
-    
-    // After 3 seconds of page load, prefetch quote forms in the background
-    const timer = setTimeout(() => {
-      prefetchResources(commonImports.quoteForms);
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <Layout title="WCCIS - Independent Insurance Agency for Contractors" pageType="home">

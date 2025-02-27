@@ -1,69 +1,42 @@
-// Utility for prefetching components and page chunks to reduce loading times and memory spikes
+import { NextRouter } from 'next/router';
 
 /**
- * Prefetches components and pages when the browser is idle
- * @param modules - An array of dynamic import functions to prefetch
+ * Prefetches a URL after a short delay to avoid unnecessary prefetching on accidental hovers
+ * 
+ * @param url - The URL to prefetch or a dynamic import function
+ * @param delayOrRouter - Either delay in milliseconds or Next.js router instance
+ * @param optionalDelay - Optional delay when router is provided as second parameter
+ * @returns An object with startPrefetch method and a cancel method
  */
-export const prefetchResources = (modules: Array<() => Promise<any>>) => {
-  if (typeof window === 'undefined' || !('requestIdleCallback' in window)) {
-    return; // Not in browser or requestIdleCallback not supported
-  }
-
-  // @ts-ignore - requestIdleCallback might not be typed
-  window.requestIdleCallback(
-    () => {
-      modules.forEach(importFunc => {
-        // Fire and forget imports to trigger prefetching
-        importFunc().catch(() => {
-          // Silently ignore prefetch errors
-        });
-      });
-    },
-    { timeout: 2000 } // 2 second timeout
-  );
-};
-
-/**
- * Prefetches a page module after a delay (useful for hover prefetching)
- * @param importFunc - The dynamic import function
- * @param delay - Delay in ms before prefetching
- */
-export const prefetchAfterDelay = (importFunc: () => Promise<any>, delay = 150) => {
-  let timeoutId: ReturnType<typeof setTimeout>;
+export const prefetchAfterDelay = (
+  urlOrImportFunc: string | (() => Promise<any>), 
+  delayOrRouter: NextRouter | number = 100,
+  optionalDelay?: number
+) => {
+  let timeoutId: NodeJS.Timeout;
   
   const startPrefetch = () => {
+    const delay = typeof delayOrRouter === 'number' ? delayOrRouter : (optionalDelay || 100);
+    
     timeoutId = setTimeout(() => {
-      importFunc().catch(() => {
-        // Silently ignore prefetch errors
-      });
+      if (typeof urlOrImportFunc === 'string' && typeof delayOrRouter !== 'number') {
+        // It's a URL with router
+        delayOrRouter.prefetch(urlOrImportFunc);
+      } else if (typeof urlOrImportFunc === 'function') {
+        // It's an import function
+        urlOrImportFunc();
+      }
     }, delay);
   };
-  
-  const cancelPrefetch = () => {
-    clearTimeout(timeoutId);
+
+  const cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
   };
-  
+
   return {
     startPrefetch,
-    cancelPrefetch
+    cancel
   };
-};
-
-/**
- * Common imports for major sections of the app that can be prefetched on idle
- */
-export const commonImports = {
-  quoteForms: [
-    () => import('@/pages/insurance/general-liability-quote'),
-    () => import('@/pages/insurance/commercial-auto-quote'),
-    () => import('@/pages/insurance/workers-comp-quote'),
-    () => import('@/components/DynamicForm'), 
-  ],
-  layout: [
-    () => import('@/components/Header'),
-    () => import('@/components/Footer'),
-  ],
-  contact: [
-    () => import('@/pages/contact')
-  ]
 }; 

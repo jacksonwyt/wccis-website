@@ -1,16 +1,8 @@
-// Try to load bundle analyzer, but continue if it's not available
-let withBundleAnalyzer = (config) => config;
-try {
-  // Only attempt to load bundle analyzer if ANALYZE is true
-  if (process.env.ANALYZE === 'true') {
-    const bundleAnalyzer = require('@next/bundle-analyzer');
-    withBundleAnalyzer = bundleAnalyzer({
-      enabled: true,
-    });
-  }
-} catch (e) {
-  console.warn('Warning: @next/bundle-analyzer not found, skipping bundle analysis');
-}
+const bundleAnalyzer = require('@next/bundle-analyzer');
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -23,44 +15,23 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24, // Increase to 24 hours
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   experimental: {
-    // Simplified experimental features
     scrollRestoration: true,
-    optimizeCss: true,
-    optimizePackageImports: [
-      'lucide-react', 
-      '@radix-ui/react-dialog', 
-      '@radix-ui/react-dropdown-menu',
-      'framer-motion',
-      'lodash-es'
-    ],
+    optimizeCss: true, // Enable CSS optimization
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
   },
+  // The ESLint config error is caused by these options
   // Disable ESLint during build to fix deployment issue
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, // Set to true to bypass ESLint during builds
   },
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Add memory optimizations for production
-  poweredByHeader: false, // Remove unnecessary header
-  output: 'standalone', // Creates a standalone build with minimal dependencies
-  compress: true, // Enable compression
-  // Static optimization improvements
-  staticPageGenerationTimeout: 120,
-  // Ensure proper handling of public directory
-  assetPrefix: process.env.NEXT_PUBLIC_SITE_URL || '',
-  // Improved headers for caching and security
   headers: async () => {
     return [
       {
@@ -68,7 +39,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=3600, s-maxage=86400', // 1 hour client, 1 day CDN
+            value: 'public, max-age=31536000, immutable',
           },
           {
             key: 'Strict-Transport-Security',
@@ -101,12 +72,6 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
         ],
       },
-      {
-        source: '/static/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
-        ],
-      },
     ];
   },
   async redirects() {
@@ -118,28 +83,48 @@ const nextConfig = {
       },
     ];
   },
-  // Simplified webpack config
+  // Custom webpack config for optimization
   webpack: (config, { dev, isServer }) => {
     // Only optimize in production builds
     if (!dev) {
-      // Add TerserPlugin options for better minification
-      config.optimization.minimizer.forEach((minimizer) => {
-        if (minimizer.constructor.name === 'TerserPlugin') {
-          minimizer.options.terserOptions.compress.drop_console = true;
-          minimizer.options.terserOptions.compress.drop_debugger = true;
-        }
-      });
-    }
-
-    // Simplified handling of sharp for image optimization
-    if (isServer) {
-      // Add sharp as an external dependency without complex logic
-      const { externals = [] } = config;
-      if (Array.isArray(externals)) {
-        config.externals = [...externals, 'sharp'];
-      } else {
-        config.externals = [externals, 'sharp'];
-      }
+      // Optimize client-side bundles
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        minSize: 20000,
+        maxSize: 150000, // Reduced from 240000 to 150000
+        minChunks: 1,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
+        cacheGroups: {
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true,
+            name(module) {
+              // Get the package name
+              const packageName = module.context.match(
+                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+              )[1];
+              
+              // Group common packages together
+              if (packageName.includes('react') || packageName.includes('next')) {
+                return 'react-vendor';
+              }
+              
+              if (packageName.includes('@radix-ui')) {
+                return 'radix-vendor';
+              }
+              
+              return `vendor-${packageName.replace('@', '')}`;
+            },
+          },
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+          },
+        },
+      };
     }
 
     return config;

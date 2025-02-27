@@ -1,3 +1,4 @@
+// src/pages/about.tsx
 import type { NextPage } from 'next';
 import React from "react";
 import Image from "next/image";
@@ -204,4 +205,4 @@ const AboutPage: NextPage = () => {
   );
 };
 
-export default AboutPage; 
+export default AboutPage;

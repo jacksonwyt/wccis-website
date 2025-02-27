@@ -2,26 +2,11 @@
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
-const path = require('path');
-const fs = require('fs');
 
-// Get environment variables with fallbacks
-const port = parseInt(process.env.PORT, 10) || 10000;
 const dev = process.env.NODE_ENV !== 'production';
-
-// Create the Next.js app
-const app = next({ 
-  dev, 
-  dir: __dirname,
-  conf: {
-    // Ensure these match next.config.js
-    compress: true,
-    poweredByHeader: false,
-    assetPrefix: process.env.NEXT_PUBLIC_SITE_URL || ''
-  }
-});
-
+const app = next({ dev });
 const handle = app.getRequestHandler();
+const port = process.env.PORT || 10000;
 
 // Helper function to log errors
 const logError = (err, context = '') => {
@@ -41,7 +26,7 @@ app.prepare()
     console.log(`  - NEXT_PUBLIC_SITE_URL: ${process.env.NEXT_PUBLIC_SITE_URL}`);
     console.log(`  - PORT: ${port}`);
 
-    const server = createServer((req, res) => {
+    createServer((req, res) => {
       try {
         // Parse the URL
         const parsedUrl = parse(req.url, true);
@@ -91,18 +76,7 @@ app.prepare()
           res.end('Internal Server Error');
         }
       }
-    });
-
-    // Add error handler for the server
-    server.on('error', (err) => {
-      logError(err, 'HTTP Server');
-      if (err.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is already in use. Please use a different port.`);
-        process.exit(1);
-      }
-    });
-
-    server.listen(port, (err) => {
+    }).listen(port, (err) => {
       if (err) throw err;
       console.log(`> Ready on http://localhost:${port}`);
     });

@@ -1,145 +1,70 @@
-import type { NextPage } from 'next';
-import React, { useState, useCallback, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Layout from '@/components/Layout';
-import { useFormStore } from '@/state/formStore';
-import { FormLayout } from '@/components/dynamic-components';
-import FormSkeleton from '@/components/FormSkeleton';
-import { DynamicForm } from '@/components/dynamic-components';
-import { FormSkeletonLoader } from '@/components/ui/LoadingComponents';
+import { Button } from '@/components/ui/Button';
+import { FormLayout } from '@/components/ui/FormLayout';
+import { ArrowRight } from 'lucide-react';
 
-// Schema definition
+// Define the schema
 const workersCompQuoteSchema = z.object({
-  companyName: z.string().min(1, "Company name is required"),
-  contactName: z.string().min(1, "Contact name is required"),
-  email: z.string().email("Invalid email").min(1, "Email is required"),
-  phone: z.string().min(1, "Phone number is required").regex(/^[0-9-+()\s]{10,}$/, "Please enter a valid phone number"),
-  numEmployees: z.string().min(1, "Number of employees is required"),
-  industry: z.string().min(1, "Industry is required"),
-  annualPayroll: z.string().min(1, "Annual payroll is required"),
-  currentProvider: z.string().optional(),
-  additionalInfo: z.string().optional()
+  feinNumber: z.string().min(1, "FEIN number is required"),
+  payrollByClassCode: z.string().min(1, "Payroll by class code is required"),
+  contractorsLicenseNumber: z.string().min(1, "Contractors license number is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email").min(1, "Email is required")
 });
 
 type WorkersCompQuote = z.infer<typeof workersCompQuoteSchema>;
 
-// Notification component for success/error messages
-const Notification = React.memo(({ type, message }: { type: 'success' | 'error', message: string }) => {
-  if (!message) return null;
-  
-  const bgColor = type === 'success' ? 'bg-green-100' : 'bg-red-100';
-  const textColor = type === 'success' ? 'text-green-700' : 'text-red-700';
-  
-  return (
-    <div className={`mb-4 p-4 ${bgColor} ${textColor} rounded-md`}>
-      {message}
-    </div>
-  );
-});
-
-const WorkersCompQuotePage: NextPage = () => {
+const WorkersCompQuotePage = () => {
+  const router = useRouter();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const { markFormAsSubmitted } = useFormStore();
-  
-  // Memoize the submit handler to prevent unnecessary re-renders
-  const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Reload the page data when the component mounts
+    router.replace(router.asPath);
+  }, [router]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<WorkersCompQuote>({
+    resolver: zodResolver(workersCompQuoteSchema),
+    defaultValues: {
+      feinNumber: '',
+      payrollByClassCode: '',
+      contractorsLicenseNumber: '',
+      phone: '',
+      email: ''
+    },
+  });
+
+  const onSubmit = async (data: WorkersCompQuote) => {
+    setIsSubmitting(true);
     setError('');
     try {
-      // Format the message body
-      const formattedData = Object.entries(data)
-        .map(([key, value]) => {
-          if (typeof value === 'object' && value !== null) {
-            return `${key}: ${JSON.stringify(value, null, 2)}`;
-          }
-          return `${key}: ${value}`;
-        })
-        .join('\n');
-      
-      const body = `
-Workers Compensation Quote Request
-
-${formattedData}
-      `;
-      
-      // Create the mailto URL
-      const mailtoURL = `mailto:customerservice@wccis.com?subject=Workers Compensation Quote Request&body=${encodeURIComponent(body)}`;
-      
-      // Open the user's default email client
-      window.open(mailtoURL, '_blank');
-      
-      // Mark form as submitted in the form store to prevent resubmission
-      markFormAsSubmitted('workers-comp-quote');
-      
-      // Track successful submission
-      if (typeof window !== 'undefined' && 'gtag' in window) {
-        // @ts-ignore - gtag might not be typed
-        window.gtag?.('event', 'quote_submission', {
-          'event_category': 'forms',
-          'event_label': 'workers_comp',
-          'value': 1
-        });
-      }
-      
-      setSuccess('Your email client has been opened. Please send the email to complete your request.');
+      const response = await fetch('/api/insure/workers-comp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to submit quote request');
+      setSuccess('Your quote request has been submitted successfully!');
+      reset();
     } catch (error: any) {
       setError(error.message || 'An error occurred.');
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [markFormAsSubmitted]);
-
-  // Define the form fields
-  const formFields = [
-    {
-      name: 'companyName',
-      label: "Company Name",
-      placeholder: "Enter your company name",
-    },
-    {
-      name: 'contactName',
-      label: "Contact Name",
-      placeholder: "Enter your full name",
-    },
-    {
-      name: 'phone',
-      label: 'Phone Number',
-      type: 'tel',
-      placeholder: '(XXX) XXX-XXXX',
-    },
-    {
-      name: 'email',
-      label: 'Email',
-      type: 'email',
-      placeholder: 'your@email.com',
-    },
-    {
-      name: 'numEmployees',
-      label: 'Number of Employees',
-      placeholder: 'How many employees do you have?',
-    },
-    {
-      name: 'industry',
-      label: 'Industry',
-      placeholder: 'What industry is your business in?',
-    },
-    {
-      name: 'annualPayroll',
-      label: 'Annual Payroll',
-      placeholder: '$',
-    },
-    {
-      name: 'currentProvider',
-      label: 'Current Insurance Provider (Optional)',
-      placeholder: 'Who is your current provider?',
-      required: false,
-    },
-    {
-      name: 'additionalInfo',
-      label: 'Additional Information (Optional)',
-      type: 'textarea',
-      placeholder: 'Any additional details that may help us provide an accurate quote',
-      required: false,
-    },
-  ];
+  };
 
   return (
     <Layout title="Workers Compensation Insurance Quote | WCCIS" pageType="insurance">
@@ -153,9 +78,9 @@ ${formattedData}
         
         <div className="container mx-auto px-4 relative">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Workers Compensation Insurance Quote</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Get Your Workers Compensation Quote</h1>
             <p className="text-xl text-gray-300 leading-relaxed">
-              Protect your employees with comprehensive workers comp coverage
+              Expert coverage for your business and employees
             </p>
           </div>
 
@@ -167,16 +92,101 @@ ${formattedData}
             maxWidth="xl"
             className="mx-auto"
           >
-            <Suspense fallback={<FormSkeletonLoader isLoading={true} pastDelay={true} />}>
-              <DynamicForm
-                id="workers-comp-quote"
-                fields={formFields}
-                schema={workersCompQuoteSchema}
-                onSubmit={handleSubmit}
-                submitLabel="Request Quote"
-                persistData={true}
-              />
-            </Suspense>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="feinNumber">
+                    FEIN Number
+                  </label>
+                  <input
+                    id="feinNumber"
+                    type="text"
+                    {...register('feinNumber')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Your Federal Employer Identification Number"
+                  />
+                  {errors.feinNumber && (
+                    <p className="text-red-400 text-sm mt-1">{errors.feinNumber.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="payrollByClassCode">
+                    Payroll by Class Code
+                  </label>
+                  <input
+                    id="payrollByClassCode"
+                    type="text"
+                    {...register('payrollByClassCode')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter payroll amount and class code"
+                  />
+                  {errors.payrollByClassCode && (
+                    <p className="text-red-400 text-sm mt-1">{errors.payrollByClassCode.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="contractorsLicenseNumber">
+                    Contractors License Number
+                  </label>
+                  <input
+                    id="contractorsLicenseNumber"
+                    type="text"
+                    {...register('contractorsLicenseNumber')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Your contractors license number"
+                  />
+                  {errors.contractorsLicenseNumber && (
+                    <p className="text-red-400 text-sm mt-1">{errors.contractorsLicenseNumber.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="phone">
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    {...register('phone')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="(555) 555-5555"
+                  />
+                  {errors.phone && (
+                    <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="email">
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    {...register('email')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="your.email@example.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                  )}
+                </div>
+              </div>
+              
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full"
+                disabled={isSubmitting}
+                rightIcon={isSubmitting ? undefined : <ArrowRight className="w-5 h-5" />}
+                isLoading={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Request Quote'}
+              </Button>
+            </form>
           </FormLayout>
         </div>
       </section>
@@ -184,4 +194,4 @@ ${formattedData}
   );
 };
 
-export default WorkersCompQuotePage; 
+export default WorkersCompQuotePage;

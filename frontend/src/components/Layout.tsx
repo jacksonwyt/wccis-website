@@ -1,10 +1,9 @@
 // src/components/Layout.tsx
+// src/components/Layout.tsx
 import React from "react";
 import Head from "next/head";
-import { Header, Footer } from "./dynamic-components";
-import { Suspense } from "react";
-import { HeaderSkeleton, FooterSkeleton } from "./ui/LoadingComponents";
-
+import Header from "./Header";
+import Footer from "./Footer";
 interface LayoutProps {
   title?: string;
   description?: string;
@@ -66,9 +65,7 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Glass Header */}
       <div className="sticky top-0 z-50">
         <div className="backdrop-blur-md bg-gradient-to-b from-white/80 to-white/70 dark:from-gray-900/80 dark:to-gray-900/70 border-b border-brand-light/10 shadow-sm">
-          <Suspense fallback={<HeaderSkeleton isLoading={true} pastDelay={true} />}>
-            <Header />
-          </Suspense>
+          <Header />
         </div>
       </div>
 
@@ -80,9 +77,7 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Glass Footer */}
       <div className="relative z-10 mt-auto">
         <div className="backdrop-blur-md bg-gradient-to-t from-white/80 to-white/70 dark:from-gray-900/80 dark:to-gray-900/70 border-t border-brand-light/10">
-          <Suspense fallback={<FooterSkeleton isLoading={true} pastDelay={true} />}>
-            <Footer />
-          </Suspense>
+          <Footer />
         </div>
       </div>
     </div>

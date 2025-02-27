@@ -1,146 +1,69 @@
-import type { NextPage } from 'next';
-import React, { useState, useCallback, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Layout from '@/components/Layout';
-import { useFormStore } from '@/state/formStore';
-import { FormLayout } from '@/components/dynamic-components';
-import FormSkeleton from '@/components/FormSkeleton';
-import { DynamicForm } from '@/components/dynamic-components';
-import { FormSkeletonLoader } from '@/components/ui/LoadingComponents';
+import { Button } from '@/components/ui/Button';
+import { FormLayout } from '@/components/ui/FormLayout';
+import { ArrowRight } from 'lucide-react';
 
 // Schema definition
 const commercialAutoQuoteSchema = z.object({
   businessName: z.string().min(1, "Business name is required"),
-  contactName: z.string().min(1, "Contact name is required"),
+  name: z.string().min(1, "Contact name is required"),
   email: z.string().email("Invalid email").min(1, "Email is required"),
-  phone: z.string().min(1, "Phone number is required").regex(/^[0-9-+()\s]{10,}$/, "Please enter a valid phone number"),
-  numVehicles: z.string().min(1, "Number of vehicles is required"),
-  vehicleTypes: z.string().min(1, "Vehicle types are required"),
-  driversInfo: z.string().min(1, "Driver information is required"),
-  currentCoverage: z.string().optional(),
-  additionalNotes: z.string().optional()
+  phone: z.string().min(1, "Phone is required"),
+  driversLicenses: z.any()
+    .refine((files: FileList | null) => files && files.length > 0, "Drivers license documents are required"),
+  vehicleRegistrations: z.any()
+    .refine((files: FileList | null) => files && files.length > 0, "Vehicle registration documents are required"),
+  message: z.string().optional(),
 });
 
 type CommercialAutoQuote = z.infer<typeof commercialAutoQuoteSchema>;
 
-// Notification component for success/error messages
-const Notification = React.memo(({ type, message }: { type: 'success' | 'error', message: string }) => {
-  if (!message) return null;
-  
-  const bgColor = type === 'success' ? 'bg-green-100' : 'bg-red-100';
-  const textColor = type === 'success' ? 'text-green-700' : 'text-red-700';
-  
-  return (
-    <div className={`mb-4 p-4 ${bgColor} ${textColor} rounded-md`}>
-      {message}
-    </div>
-  );
-});
-
-const CommercialAutoQuotePage: NextPage = () => {
+const CommercialAutoQuotePage = () => {
+  const router = useRouter();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const { markFormAsSubmitted } = useFormStore();
-  
-  // Memoize the submit handler to prevent unnecessary re-renders
-  const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CommercialAutoQuote>({
+    resolver: zodResolver(commercialAutoQuoteSchema),
+    defaultValues: {
+      businessName: '',
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+    },
+  });
+
+  const onSubmit = async (data: CommercialAutoQuote) => {
+    setIsSubmitting(true);
     setError('');
     try {
-      // Format the message body
-      const formattedData = Object.entries(data)
-        .map(([key, value]) => {
-          if (typeof value === 'object' && value !== null) {
-            return `${key}: ${JSON.stringify(value, null, 2)}`;
-          }
-          return `${key}: ${value}`;
-        })
-        .join('\n');
-      
-      const body = `
-Commercial Auto Insurance Quote Request
-
-${formattedData}
-      `;
-      
-      // Create the mailto URL
-      const mailtoURL = `mailto:customerservice@wccis.com?subject=Commercial Auto Insurance Quote Request&body=${encodeURIComponent(body)}`;
-      
-      // Open the user's default email client
-      window.open(mailtoURL, '_blank');
-      
-      // Mark form as submitted in the form store to prevent resubmission
-      markFormAsSubmitted('commercial-auto-quote');
-      
-      // Track successful submission
-      if (typeof window !== 'undefined' && 'gtag' in window) {
-        // @ts-ignore - gtag might not be typed
-        window.gtag?.('event', 'quote_submission', {
-          'event_category': 'forms',
-          'event_label': 'commercial_auto',
-          'value': 1
-        });
-      }
-      
-      setSuccess('Your email client has been opened. Please send the email to complete your request.');
+      const response = await fetch('/api/insure/commercial-auto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to submit quote request');
+      setSuccess('Your quote request has been submitted successfully!');
+      reset();
     } catch (error: any) {
       setError(error.message || 'An error occurred.');
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [markFormAsSubmitted]);
-
-  // Define the form fields
-  const formFields = [
-    {
-      name: 'businessName',
-      label: "Business Name",
-      placeholder: "Enter your business name",
-    },
-    {
-      name: 'contactName',
-      label: "Contact Name",
-      placeholder: "Enter your full name",
-    },
-    {
-      name: 'phone',
-      label: 'Phone Number',
-      type: 'tel',
-      placeholder: '(XXX) XXX-XXXX',
-    },
-    {
-      name: 'email',
-      label: 'Email',
-      type: 'email',
-      placeholder: 'your@email.com',
-    },
-    {
-      name: 'numVehicles',
-      label: 'Number of Vehicles',
-      placeholder: 'How many vehicles need coverage?',
-    },
-    {
-      name: 'vehicleTypes',
-      label: 'Types of Vehicles',
-      placeholder: 'Describe the types of vehicles (trucks, vans, cars, etc.)',
-    },
-    {
-      name: 'driversInfo',
-      label: 'Driver Information',
-      type: 'textarea',
-      placeholder: 'Number of drivers and basic information about them',
-    },
-    {
-      name: 'currentCoverage',
-      label: 'Current Coverage (Optional)',
-      placeholder: 'Describe your current coverage if applicable',
-      required: false,
-    },
-    {
-      name: 'additionalNotes',
-      label: 'Additional Notes (Optional)',
-      type: 'textarea',
-      placeholder: 'Any additional information that may help us provide an accurate quote',
-      required: false,
-    },
-  ];
+  };
 
   return (
     <Layout title="Commercial Auto Insurance Quote | WCCIS" pageType="insurance">
@@ -154,9 +77,9 @@ ${formattedData}
         
         <div className="container mx-auto px-4 relative">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Commercial Auto Insurance Quote</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Get Your Commercial Auto Quote</h1>
             <p className="text-xl text-gray-300 leading-relaxed">
-              Get comprehensive coverage for your business vehicles
+              Quick, hassle-free insurance quotes for your business vehicles
             </p>
           </div>
 
@@ -168,16 +91,138 @@ ${formattedData}
             maxWidth="xl"
             className="mx-auto"
           >
-            <Suspense fallback={<FormSkeletonLoader isLoading={true} pastDelay={true} />}>
-              <DynamicForm
-                id="commercial-auto-quote"
-                fields={formFields}
-                schema={commercialAutoQuoteSchema}
-                onSubmit={handleSubmit}
-                submitLabel="Request Quote"
-                persistData={true}
-              />
-            </Suspense>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="businessName">
+                    Business Name
+                  </label>
+                  <input
+                    id="businessName"
+                    type="text"
+                    {...register('businessName')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Your business name"
+                  />
+                  {errors.businessName?.message && (
+                    <p className="text-red-400 text-sm mt-1">{errors.businessName.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="name">
+                    Contact Name
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    {...register('name')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Your full name"
+                  />
+                  {errors.name?.message && (
+                    <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="email">
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    {...register('email')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="your.email@example.com"
+                  />
+                  {errors.email?.message && (
+                    <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="phone">
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    {...register('phone')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="(555) 555-5555"
+                  />
+                  {errors.phone?.message && (
+                    <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="driversLicenses">
+                    Drivers License Documents (Required)
+                  </label>
+                  <input
+                    id="driversLicenses"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    {...register('driversLicenses')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  {errors.driversLicenses?.message && (
+                    <p className="text-red-400 text-sm mt-1">{String(errors.driversLicenses.message)}</p>
+                  )}
+                  <p className="text-sm text-gray-400 mt-1">
+                    Please upload copies of drivers licenses for all licensed drivers
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="vehicleRegistrations">
+                    Vehicle Registration Documents (Required)
+                  </label>
+                  <input
+                    id="vehicleRegistrations"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    {...register('vehicleRegistrations')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  {errors.vehicleRegistrations?.message && (
+                    <p className="text-red-400 text-sm mt-1">{String(errors.vehicleRegistrations.message)}</p>
+                  )}
+                  <p className="text-sm text-gray-400 mt-1">
+                    Please upload copies of vehicle registrations
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-gray-200 font-medium mb-2" htmlFor="message">
+                    Additional Information (Optional)
+                  </label>
+                  <textarea
+                    id="message"
+                    {...register('message')}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    rows={4}
+                    placeholder="Any additional details that might help us provide a more accurate quote"
+                  />
+                </div>
+              </div>
+              
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full"
+                disabled={isSubmitting}
+                rightIcon={isSubmitting ? undefined : <ArrowRight className="w-5 h-5" />}
+                isLoading={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Request Quote'}
+              </Button>
+            </form>
           </FormLayout>
         </div>
       </section>
@@ -185,4 +230,4 @@ ${formattedData}
   );
 };
 
-export default CommercialAutoQuotePage; 
+export default CommercialAutoQuotePage;

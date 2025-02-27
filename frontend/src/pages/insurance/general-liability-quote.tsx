@@ -1,11 +1,33 @@
 import type { NextPage } from 'next';
-import React, { useState, useCallback, Suspense } from 'react';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 import Layout from '@/components/Layout';
 import { useFormStore } from '@/state/formStore';
-import { FormLayout } from '@/components/dynamic-components';
-import { FormSkeletonLoader } from '@/components/ui/LoadingComponents';
-import { DynamicForm } from '@/components/dynamic-components';
+import { FormLayout } from '@/components/ui/FormLayout';
+
+// Dynamically import the DynamicForm component
+const DynamicForm = dynamic(
+  () => import('@/components/DynamicForm').then(mod => ({ default: mod.DynamicForm })),
+  { 
+    loading: () => <FormSkeleton />,
+    ssr: false // Disable server-side rendering for this component
+  }
+);
+
+// Simple loading skeleton for the form
+const FormSkeleton = () => (
+  <div className="space-y-6">
+    {[...Array(7)].map((_, i) => (
+      <div key={i} className="space-y-2">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+        <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded"></div>
+      </div>
+    ))}
+    <div className="h-10 bg-blue-100 dark:bg-blue-900/30 rounded w-full"></div>
+  </div>
+);
 
 // Schema definition
 const generalLiabilityQuoteSchema = z.object({
@@ -43,27 +65,27 @@ const GeneralLiabilityQuotePage: NextPage = () => {
   const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
     setError('');
     try {
-      // Format the message body
-      const formattedData = Object.entries(data)
-        .map(([key, value]) => {
-          if (typeof value === 'object' && value !== null) {
-            return `${key}: ${JSON.stringify(value, null, 2)}`;
-          }
-          return `${key}: ${value}`;
-        })
-        .join('\n');
+      // Add performance timing for analytics
+      const startTime = performance.now();
       
-      const body = `
-General Liability Quote Request
-
-${formattedData}
-      `;
+      const response = await fetch('/api/insure/general-liability', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache' // Ensure fresh response
+        },
+        body: JSON.stringify(data),
+      });
       
-      // Create the mailto URL
-      const mailtoURL = `mailto:customerservice@wccis.com?subject=General Liability Quote Request&body=${encodeURIComponent(body)}`;
+      const result = await response.json();
       
-      // Open the user's default email client
-      window.open(mailtoURL, '_blank');
+      // Record submission time for analytics
+      const endTime = performance.now();
+      console.debug(`Form submission took ${endTime - startTime}ms`);
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit quote request');
+      }
       
       // Mark form as submitted in the form store to prevent resubmission
       markFormAsSubmitted('general-liability-quote');
@@ -78,9 +100,10 @@ ${formattedData}
         });
       }
       
-      setSuccess('Your email client has been opened. Please send the email to complete your request.');
+      setSuccess('Your quote request has been submitted successfully!');
     } catch (error: any) {
       setError(error.message || 'An error occurred.');
+      throw error; // Re-throw to let the DynamicForm error handling take over
     }
   }, [markFormAsSubmitted]);
 
@@ -152,7 +175,7 @@ ${formattedData}
             maxWidth="xl"
             className="mx-auto"
           >
-            <Suspense fallback={<FormSkeletonLoader isLoading={true} pastDelay={true} />}>
+            <Suspense fallback={<FormSkeleton />}>
               <DynamicForm
                 id="general-liability-quote"
                 fields={formFields}
@@ -169,4 +192,4 @@ ${formattedData}
   );
 };
 
-export default GeneralLiabilityQuotePage; 
+export default GeneralLiabilityQuotePage;
