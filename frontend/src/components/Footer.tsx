@@ -127,7 +127,7 @@ const Footer = () => {
         <div className="mt-12 border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-400">
-              © {new Date().getFullYear()} WCCIS. All rights reserved. CA License #0123456
+              © {new Date().getFullYear()} WCCIS. All rights reserved. CA License #058303
             </div>
             <div className="flex items-center space-x-6">
               <Link
