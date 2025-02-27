@@ -95,7 +95,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-medium mb-1">Phone</h3>
-                    <p className="text-gray-300">(310) 289-9444</p>
+                    <p className="text-gray-300">(858) 762-2698</p>
                     <p className="text-gray-300">Monday-Friday, 9AM-5PM PT</p>
                   </div>
                 </div>
@@ -106,7 +106,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-medium mb-1">Email</h3>
-                    <p className="text-gray-300">info@wccis.com</p>
+                    <p className="text-gray-300">customerservice@wccis.com</p>
                     <p className="text-gray-300">We respond within 24 hours</p>
                   </div>
                 </div>
@@ -117,8 +117,8 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-medium mb-1">Office</h3>
-                    <p className="text-gray-300">8484 Wilshire Blvd, Suite 870</p>
-                    <p className="text-gray-300">Beverly Hills, CA 90211</p>
+                    <p className="text-gray-300">14781 Pomerado Road, Suite 215</p>
+                    <p className="text-gray-300">Poway, CA 92064</p>
                   </div>
                 </div>
               </div>
