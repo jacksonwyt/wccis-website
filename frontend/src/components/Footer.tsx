@@ -37,7 +37,7 @@ const Footer = () => {
                 className="flex items-center text-gray-300 hover:text-blue-400 transition-colors py-2 md:py-1"
               >
                 <Phone className="w-4 h-4 mr-2" />
-                (800) 123-4567
+                (855) 376-2200
               </Link>
               <Link
                 href="mailto:customerservice@wccis.com"

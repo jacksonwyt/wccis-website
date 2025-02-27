@@ -13,8 +13,21 @@ const limits = {
 // Create storage engine
 const storage = multer.memoryStorage();
 
+// Define the Express.Multer.File interface instead of using multer.File
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination?: string;
+  filename?: string;
+  path?: string;
+  buffer?: Buffer;
+}
+
 // Supported file types
-const fileFilter = (req: Request, file: multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (req: Request, file: MulterFile, cb: multer.FileFilterCallback) => {
   // Allow all images
   if (file.mimetype.startsWith('image/')) {
     return cb(null, true);

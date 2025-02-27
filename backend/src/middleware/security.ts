@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import { rateLimit } from 'express-rate-limit';
+import { doubleCsrf } from 'csrf-csrf';
 import { AppError } from '../types/errors';
 
 // Set up rate limiter: maximum of 100 requests per minute
@@ -14,6 +15,21 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again after a minute',
   skipSuccessfulRequests: false, // Count all requests
 });
+
+// CSRF Protection configuration
+const { generateToken, doubleCsrfProtection } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET || 'default-csrf-secret-key',
+  cookieName: "csrf-token",
+  cookieOptions: {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === 'production'
+  },
+});
+
+// Export CSRF token generator for routes
+export { generateToken };
 
 // CORS options
 const corsOptions = {
@@ -60,6 +76,9 @@ export const configureSecurity = () => {
   return [
     // Apply CORS
     cors(corsOptions),
+    
+    // Apply CSRF Protection
+    doubleCsrfProtection,
     
     // Apply helmet security headers
     helmet({
