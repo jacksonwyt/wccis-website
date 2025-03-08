@@ -125,18 +125,23 @@ export const scrollTo = (
 /**
  * Sets up smooth scrolling for all anchor links on the page
  * @param options - Default scroll options to apply
+ * @returns A cleanup function to remove event listeners
  */
 export const initSmoothScrolling = (defaultOptions: SmoothScrollOptions = {}) => {
   // Don't run on server
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return () => {};
 
-  // Process on DOM load
-  document.addEventListener('DOMContentLoaded', () => {
+  // Store event listeners for cleanup
+  const clickHandlers = new Map<Element, EventListener>();
+  let domReadyHandler: EventListener | null = null;
+  
+  // Function to add event listeners
+  const setupEventListeners = () => {
     // Find all anchor links
     const links = document.querySelectorAll('a[href^="#"]');
     
     links.forEach(link => {
-      link.addEventListener('click', (event) => {
+      const clickHandler = (event: Event) => {
         // Get target from href
         const href = link.getAttribute('href');
         if (!href || href === '#') return;
@@ -156,7 +161,40 @@ export const initSmoothScrolling = (defaultOptions: SmoothScrollOptions = {}) =>
           // Fallback
           window.location.hash = href;
         }
-      });
+      };
+      
+      // Store the handler for cleanup
+      clickHandlers.set(link, clickHandler);
+      link.addEventListener('click', clickHandler);
     });
-  });
+  };
+  
+  // Function to clean up event listeners
+  const cleanupEventListeners = () => {
+    clickHandlers.forEach((handler, link) => {
+      link.removeEventListener('click', handler);
+    });
+    clickHandlers.clear();
+  };
+
+  // Set up the DOMContentLoaded handler
+  domReadyHandler = () => {
+    setupEventListeners();
+  };
+  
+  // Add event listener for DOMContentLoaded if document is not already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', domReadyHandler);
+  } else {
+    // Document already loaded, set up immediately
+    setupEventListeners();
+  }
+  
+  // Return cleanup function
+  return () => {
+    if (domReadyHandler) {
+      document.removeEventListener('DOMContentLoaded', domReadyHandler);
+    }
+    cleanupEventListeners();
+  };
 }; 

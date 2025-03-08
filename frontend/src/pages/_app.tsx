@@ -5,6 +5,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { DefaultSeo } from 'next-seo';
 import { Analytics } from '@vercel/analytics/react';
 import { initSmoothScrolling } from "@/utils/smoothScroll";
+import { cleanupFormStore } from "@/state/formStore";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 
@@ -23,8 +24,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       document.documentElement.classList.add('smooth-scroll');
     }
     
-    // Initialize smooth scrolling with default options
-    initSmoothScrolling({
+    // Initialize smooth scrolling with default options and capture cleanup
+    const smoothScrollCleanup = initSmoothScrolling({
       offset: -80, // Offset for header height
       duration: 800
     });
@@ -46,10 +47,20 @@ function MyApp({ Component, pageProps }: AppProps) {
       window.addEventListener('scroll', updateProgress);
       updateProgress(); // Initial calculation
       
-      return () => window.removeEventListener('scroll', updateProgress);
+      return () => {
+        window.removeEventListener('scroll', updateProgress);
+        indicator.remove(); // Remove the element when component unmounts
+      };
     };
     
-    return addScrollProgressIndicator();
+    const progressCleanup = addScrollProgressIndicator();
+    
+    // Return combined cleanup function
+    return () => {
+      smoothScrollCleanup();
+      progressCleanup();
+      cleanupFormStore(); // Clean up form store timers
+    };
   }, []);
 
   return (

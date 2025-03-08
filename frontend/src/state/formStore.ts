@@ -106,17 +106,39 @@ export const useFormStore = create<FormStore>()(
             return state; // Don't update if too large
           }
           
-          return {
-            forms: {
-              ...state.forms,
-              [formId]: { 
-                ...state.forms[formId], 
-                ...data, 
-                __timestamp: Date.now(),
-                __submitted: false, 
-              },
+          // Update the form with new data
+          const updatedForms = {
+            ...state.forms,
+            [formId]: { 
+              ...state.forms[formId], 
+              ...data, 
+              __timestamp: Date.now(),
+              __submitted: false, 
             },
           };
+          
+          // Limit total number of forms to prevent unbounded growth
+          // If we have too many forms, keep only the most recent ones
+          const MAX_FORMS = 10; // Maximum number of forms to store
+          const entries = Object.entries(updatedForms);
+          
+          if (entries.length > MAX_FORMS) {
+            const sortedEntries = entries.sort((a, b) => {
+              const timeA = a[1].__timestamp || 0;
+              const timeB = b[1].__timestamp || 0;
+              return timeB - timeA; // Sort in descending order (newest first)
+            });
+            
+            // Only keep the MAX_FORMS most recent forms
+            const limitedForms: { [key: string]: FormData } = {};
+            sortedEntries.slice(0, MAX_FORMS).forEach(([key, value]) => {
+              limitedForms[key] = value;
+            });
+            
+            return { forms: limitedForms };
+          }
+          
+          return { forms: updatedForms };
         }),
         
       getFormData: (formId: string) => {
@@ -213,15 +235,33 @@ export const useFormStore = create<FormStore>()(
   )
 );
 
+// Store references to timers for cleanup
+let cleanupTimeoutId: NodeJS.Timeout | null = null;
+let cleanupIntervalId: NodeJS.Timeout | null = null;
+
 // Clean up expired forms when the module loads
 if (typeof window !== 'undefined') {
   // Only run in browser environment
-  setTimeout(() => {
+  cleanupTimeoutId = setTimeout(() => {
     useFormStore.getState().clearExpiredForms();
+    cleanupTimeoutId = null;
   }, 1000);
   
   // Set up periodic cleanup
-  setInterval(() => {
+  cleanupIntervalId = setInterval(() => {
     useFormStore.getState().clearExpiredForms();
   }, 60 * 60 * 1000); // Every hour
 }
+
+// Export a cleanup function to be called when the app unmounts
+export const cleanupFormStore = () => {
+  if (cleanupTimeoutId) {
+    clearTimeout(cleanupTimeoutId);
+    cleanupTimeoutId = null;
+  }
+  
+  if (cleanupIntervalId) {
+    clearInterval(cleanupIntervalId);
+    cleanupIntervalId = null;
+  }
+};

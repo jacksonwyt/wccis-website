@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { prefetchAfterDelay } from '@/utils/prefetcher';
 
@@ -12,19 +12,44 @@ export const usePrefetchOnHover = (
   delay = 150
 ) => {
   const router = useRouter();
+  const prefetcherRef = useRef<ReturnType<typeof prefetchAfterDelay> | null>(null);
 
-  const onPrefetch = useCallback(() => {
+  // Cleanup function
+  useEffect(() => {
+    return () => {
+      if (prefetcherRef.current) {
+        prefetcherRef.current.cancel();
+        prefetcherRef.current = null;
+      }
+    };
+  }, []);
+
+  const onMouseEnter = useCallback(() => {
     // Also prefetch the Next.js page
     if (typeof router.prefetch === 'function') {
       router.prefetch(router.pathname);
     }
     
+    // Cancel any existing prefetch
+    if (prefetcherRef.current) {
+      prefetcherRef.current.cancel();
+    }
+    
     // Start prefetching the component
-    const { startPrefetch } = prefetchAfterDelay(importFunc, delay);
-    startPrefetch();
+    const prefetcher = prefetchAfterDelay(importFunc, delay);
+    prefetcherRef.current = prefetcher;
+    prefetcher.startPrefetch();
   }, [router, importFunc, delay]);
 
-  return onPrefetch;
+  const onMouseLeave = useCallback(() => {
+    // Cancel the prefetch if mouse leaves before completion
+    if (prefetcherRef.current) {
+      prefetcherRef.current.cancel();
+      prefetcherRef.current = null;
+    }
+  }, []);
+
+  return { onMouseEnter, onMouseLeave };
 };
 
 /**
@@ -39,26 +64,44 @@ export const usePrefetchPathOnHover = (
   delay = 150
 ) => {
   const router = useRouter();
+  const prefetchersRef = useRef<Array<ReturnType<typeof prefetchAfterDelay>>>([]);
   
-  const prefetchHandlers = {
-    onMouseEnter: useCallback(() => {
-      // Prefetch the Next.js page route
-      if (typeof router.prefetch === 'function') {
-        router.prefetch(path);
-      }
-      
-      // Prefetch the component resources
-      importFuncs.forEach(importFunc => {
-        const { startPrefetch } = prefetchAfterDelay(importFunc, delay);
-        startPrefetch();
-      });
-    }, [router, path, importFuncs, delay]),
+  // Clean up all prefetchers when the component unmounts
+  useEffect(() => {
+    return () => {
+      prefetchersRef.current.forEach(prefetcher => prefetcher.cancel());
+      prefetchersRef.current = [];
+    };
+  }, []);
+  
+  const onMouseEnter = useCallback(() => {
+    // Prefetch the Next.js page route
+    if (typeof router.prefetch === 'function') {
+      router.prefetch(path);
+    }
     
-    onClick: useCallback(() => {
-      // Immediately load the path
-      router.push(path);
-    }, [router, path])
-  };
+    // Clean up any existing prefetchers
+    prefetchersRef.current.forEach(prefetcher => prefetcher.cancel());
+    prefetchersRef.current = [];
+    
+    // Prefetch the component resources
+    importFuncs.forEach(importFunc => {
+      const prefetcher = prefetchAfterDelay(importFunc, delay);
+      prefetchersRef.current.push(prefetcher);
+      prefetcher.startPrefetch();
+    });
+  }, [router, path, importFuncs, delay]);
   
-  return prefetchHandlers;
+  const onMouseLeave = useCallback(() => {
+    // Cancel prefetching if the mouse leaves before completion
+    prefetchersRef.current.forEach(prefetcher => prefetcher.cancel());
+    prefetchersRef.current = [];
+  }, []);
+  
+  const onClick = useCallback(() => {
+    // Immediately load the path
+    router.push(path);
+  }, [router, path]);
+  
+  return { onMouseEnter, onMouseLeave, onClick };
 }; 
