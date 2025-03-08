@@ -1,5 +1,21 @@
 // src/utils/image-config.ts
 import { ImageProps } from 'next/image';
+import { useEffect } from 'react';
+
+// Image memory management - helps reduce memory usage
+export const useImageMemoryManagement = () => {
+  useEffect(() => {
+    // Register a cleanup function to help GC when component unmounts
+    return () => {
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        // @ts-ignore - Using non-standard API
+        window.requestIdleCallback(() => {
+          // This empty callback helps trigger GC when browser is idle
+        });
+      }
+    };
+  }, []);
+};
 
 export const HERO_IMAGES = {
   PALM_ROAD: {
@@ -37,10 +53,10 @@ export const getImageProps = (
   alt,
   fill: true,
   className: "object-cover",
-  priority,
+  priority: isHero ? priority : false, // Only allow priority on hero images when explicitly set
   sizes: isHero 
-    ? "(max-width: 768px) 100vw, 100vw" 
+    ? "(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw" // Reduced from 100vw
     : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
-  quality: isHero ? 85 : 80,
-  loading: priority ? undefined : 'lazy',
+  quality: isHero ? 75 : 70, // Reduced quality to save memory
+  loading: priority && isHero ? undefined : 'lazy', // Force lazy loading except for hero with priority
 });

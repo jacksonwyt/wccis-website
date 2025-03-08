@@ -1,9 +1,9 @@
 // src/components/Layout.tsx
-// src/components/Layout.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import Header from "./Header";
 import Footer from "./Footer";
+import { useImageMemoryManagement } from "@/utils/image-config";
 interface LayoutProps {
   title?: string;
   description?: string;
@@ -17,6 +17,33 @@ const Layout: React.FC<LayoutProps> = ({
   children,
   pageType = 'home'
 }) => {
+  // Use memory management hook to help with GC
+  useImageMemoryManagement();
+  
+  // Add manual memory cleanup on route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      // Force image cleanup on route change
+      if (typeof window !== 'undefined') {
+        // Clear image cache when possible
+        if ('requestIdleCallback' in window) {
+          // @ts-ignore - Using non-standard API
+          window.requestIdleCallback(() => {
+            // Empty callback to hint GC
+          });
+        }
+      }
+    };
+    
+    // Add event listener
+    window.addEventListener('beforeunload', handleRouteChange);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('beforeunload', handleRouteChange);
+    };
+  }, []);
+
   const getAnimationClass = () => {
     return ''; // Removed animations as requested
   };

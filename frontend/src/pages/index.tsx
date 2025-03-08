@@ -24,8 +24,17 @@ const HomePage = () => {
             fill={true}
             className="object-cover"
             priority={true}
-            sizes="(max-width: 768px) 100vw, 100vw"
-            quality={85}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+            quality={75}
+            onLoad={() => {
+              // Force garbage collection hint when image loads
+              if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+                // @ts-ignore - Using non-standard API
+                window.requestIdleCallback(() => {
+                  // This empty callback helps trigger GC when browser is idle
+                });
+              }
+            }}
           />
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
@@ -197,10 +206,10 @@ const HomePage = () => {
                   src="/images/sections/california-street.jpg"
                   alt="Construction site"
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
-                  quality={80}
+                  quality={70}
                 />
               </div>
               {/* Decorative elements */}

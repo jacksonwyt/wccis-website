@@ -10,10 +10,10 @@ const nextConfig = {
   output: 'standalone',
   images: {
     domains: [],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60 * 60 * 24, // Increase to 24 hours
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920], // Removed 2048, 3840 - too large
+    imageSizes: [16, 32, 48, 64, 96, 128, 256], // Removed 384 - too large
+    formats: ['image/webp'], // Removed AVIF to reduce memory usage
+    minimumCacheTTL: 60 * 60 * 24, // 24 hours
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
