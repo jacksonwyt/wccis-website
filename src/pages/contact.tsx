@@ -52,45 +52,6 @@ ${formData.message}
 
   return (
     <Layout title="Contact Us | WCCIS" pageType="info">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center" id="hero-section">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero/sunset-skyline.jpg"
-            alt="City lights at night"
-            fill={true}
-            className="object-cover"
-            priority={true}
-            sizes="(max-width: 768px) 100vw, 100vw"
-            quality={85}
-          />
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent" />
-          </div>
-        </div>
-
-        <div className="relative container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.1s_forwards]">
-                  Get in Touch
-                </h1>
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.3s_forwards]">
-                  <span className="bg-clip-text bg-gradient-to-r text-transparent from-blue-400 via-white-400 to-blue-200">
-                    With Our Team
-                  </span>
-                </h1>
-              </div>
-              <p className="text-xl text-gray-200 leading-relaxed max-w-2xl text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.5s_forwards]">
-                Have a question about your insurance? Need a quote? We&apos;re here to help.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Contact Info & Form */}
       <section className="py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
         {/* Static gradient background */}
@@ -98,13 +59,14 @@ ${formData.message}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-500/10 to-blue-400/10" />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-gray-900" />
         </div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Contact Information */}
-            <div>
+          {/* Use flex column layout on mobile, grid on medium screens and up */}
+          <div className="flex flex-col md:grid md:grid-cols-2 gap-12">
+            {/* Contact Information - Order 2 on mobile, Order 1 on md+ */}
+            <div className="order-2 md:order-1">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">Contact Information</h2>
-              
+
               <div className="space-y-8 mb-12">
                 <div className="flex items-start gap-4 p-4 bg-white/5 hover:bg-white/[0.07] transition-colors border border-white/10">
                   <div className="p-2 bg-gradient-to-br from-blue-500/30 to-blue-700/30">
@@ -148,7 +110,6 @@ ${formData.message}
                     height="100%"
                     className="border-0"
                     allowFullScreen
-                    loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
                 </div>
@@ -157,12 +118,12 @@ ${formData.message}
               </div>
             </div>
             
-            {/* Contact Form */}
-            <div className="bg-gradient-to-r from-white/5 to-white/[0.02] p-8 border border-white/10">
+            {/* Contact Form - Order 1 on mobile, Order 2 on md+ */}
+            <div className="order-1 md:order-2 bg-gradient-to-r from-white/5 to-white/[0.02] p-8 border border-white/10">
               <div className="flex justify-center mb-4">
-                <Lottie 
-                  animationData={sendMessageAnimation} 
-                  loop={true} 
+                <Lottie
+                  animationData={sendMessageAnimation}
+                  loop={true}
                   className="w-24 h-24"
                 />
               </div>
@@ -201,7 +162,7 @@ ${formData.message}
                 </div>
                 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-200 mb-1">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-200">
                     Phone Number
                   </label>
                   <Input
@@ -215,7 +176,7 @@ ${formData.message}
                 </div>
                 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-200 mb-1">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-200">
                     Message
                   </label>
                   <Textarea
@@ -246,7 +207,7 @@ ${formData.message}
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden bg-gray-900">
+      <section className="py-12 relative overflow-hidden bg-gray-900">
         {/* Static gradient background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-400/20" />
@@ -255,7 +216,7 @@ ${formData.message}
         </div>
         <div className="container mx-auto px-4 relative">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               Need Insurance Right Away?
             </h2>
             <p className="text-gray-200 text-lg mb-8">
