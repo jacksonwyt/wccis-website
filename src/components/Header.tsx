@@ -84,7 +84,7 @@ const Header = () => {
           isScrolled ? "backdrop-blur-xl bg-black/80" : "bg-transparent",
           isScrollingUp ? "" : "translate-y-[-100%]",
           "border-b border-white/[0.05]",
-          isScrolled ? 'h-12 lg:h-16' : 'h-14 lg:h-20'
+          isScrolled ? 'h-12 lg:h-16' : 'h-12 lg:h-20'
         )}
         style={{
           transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)"

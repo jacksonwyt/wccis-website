@@ -20,7 +20,7 @@ const HomePage = () => {
   return (
     <Layout title="WCCIS - Independent Insurance Agency for Contractors" pageType="home">
       {/* Hero Section */}
-      <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center" id="hero-section">
+      <section className="relative min-h-[90vh] md:min-h-[90vh] flex items-center" id="hero-section">
         <div className="absolute inset-0">
           <Image
             src="/images/hero/sunset-skyline.jpg"
@@ -48,7 +48,7 @@ const HomePage = () => {
 
         <div className="relative container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.1s_forwards]">
                   The Independent Contractors
@@ -62,21 +62,43 @@ const HomePage = () => {
               
             </div>
           </div>
+          {/* Call to Action Buttons Moved Here */}
+          <div className="flex flex-col items-center justify-center mt-10">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 w-full sm:w-auto">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => router.push(ROUTES.INSURE)}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+                className="transition-transform duration-200 hover:translate-x-1 text-lg"
+              >
+                Get Your Free Quote Today
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => router.push(ROUTES.CONTACT)}
+                className="text-white border-white/30 hover:bg-white/10 transition-transform duration-200 hover:translate-x-1 text-lg"
+              >
+                Speak with an Agent
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
 
 
       {/* Insurance Types - Inspired by Stripe's card layout */}
-      <section className="pt-12 pb-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+      <section className=" bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
         {/* Static gradient background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-500/10 to-blue-400/10" />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-gray-900" />
         </div>
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               Comprehensive Coverage Options
             </h2>
             <p className="text-gray-300 text-lg">
@@ -84,7 +106,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 md:gap-8 mb-16">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-8">
             {[
               {
                 title: "General Liability",
@@ -110,16 +132,16 @@ const HomePage = () => {
                 className="group relative overflow-hidden bg-gradient-to-r from-white/5 to-white/[0.02] p-8 hover:from-white/10 hover:to-white/[0.05] transition-all duration-200 border border-white/10"
               >
                 <div className="relative z-10">
-                  <div className="mb-4 inline-block bg-gradient-to-br from-blue-500/30 to-blue-700/30 p-3">
+                  <div className=" inline-block bg-gradient-to-br from-blue-500/30 to-blue-700/30 p-3">
                     <item.icon className="h-6 w-6 text-blue-400" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
-                  <p className="text-gray-300 mb-6">{item.description}</p>
+                  <h3 className="text-xl font-semibold text-white">{item.title}</h3>
+                  <p className="text-gray-300">{item.description}</p>
                   <Button
                     variant="ghost"
                     onClick={() => router.push(item.route)}
                     rightIcon={<ChevronRight className="w-4 h-4" />}
-                    className="text-blue-400 hover:text-blue-300 p-0"
+                    className="text-blue-400 hover:text-blue-300"
                   >
                     Learn More
                   </Button>
@@ -130,29 +152,6 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-
-          {/* Call to Action Buttons */}
-          <div className="flex flex-col items-center justify-center mt-16">
-            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 w-full sm:w-auto">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => router.push(ROUTES.INSURE)}
-                rightIcon={<ArrowRight className="w-5 h-5" />}
-                className="transition-transform duration-200 hover:translate-x-1 text-lg"
-              >
-                Get Your Free Quote Today
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => router.push(ROUTES.CONTACT)}
-                className="text-white border-white/30 hover:bg-white/10 transition-transform duration-200 hover:translate-x-1 text-lg"
-              >
-                Speak with an Agent
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -160,11 +159,12 @@ const HomePage = () => {
       <section className="py-16 md:py-24 bg-gradient-to-b from-gray-900 to-black">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+            {/* Text content first */}
             <div>
-              <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6">
+              <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6 text-center md:text-left">
                 Why Choose WCCIS?
               </h2>
-              <p className="text-gray-300 text-base md:text-lg mb-6 md:mb-8">
+              <p className="text-gray-300 text-base md:text-lg mb-6 md:mb-8 text-center md:text-left">
                 Your time is valuable. Get expert, quick answers to your insurance questions by speaking directly with us.
                 No third party services, no waiting for hours to get answers.
               </p>
@@ -186,7 +186,7 @@ const HomePage = () => {
                     icon: ThumbsUp,
                   },
                 ].map((feature) => (
-                  <li 
+                  <li
                     key={feature.title}
                     className="flex items-start gap-2 md:gap-4 p-3 md:p-4 bg-white/5 hover:bg-white/[0.07] transition-colors border border-white/10"
                   >
@@ -201,12 +201,13 @@ const HomePage = () => {
                 ))}
               </ul>
             </div>
+            {/* Animation second */}
             <div className="relative">
               <div className="aspect-square overflow-hidden">
-                <Lottie 
+                <Lottie
                   animationData={whyChooseUsAnimation}
                   loop={true}
-                  autoplay={true} 
+                  autoplay={true}
                   className="object-cover group-hover:scale-105 transition-transform duration-500 w-full h-full"
                 />
               </div>

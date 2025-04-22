@@ -5,7 +5,6 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, ChevronRight, Truck, Shield, Briefcase } from "lucide-react";
 import { ROUTES } from "@/utils/routes";
-import Image from "next/image";
 import animationData from '../../../public/animations/commercialauto.json';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
@@ -16,72 +15,37 @@ const CommercialAutoPage = () => {
   return (
     <Layout title="Commercial Auto Insurance | WCCIS" pageType="insurance">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center" id="hero-section">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero/auto.jpg"
-            alt="Commercial trucks on the road"
-            fill={true}
-            className="object-cover"
-            priority={true}
-            sizes="(max-width: 768px) 100vw, 100vw"
-            quality={85}
-          />
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-blue-500/10 to-transparent" />
-          </div>
-        </div>
+      {/* <section className="relative min-h-[90vh] flex items-center" id="hero-section"> ... </section> */}
 
-        <div className="relative container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.1s_forwards]">
-                  Commercial Auto
-                </h1>
-                <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.3s_forwards]">
-                  <span className="bg-clip-text bg-gradient-to-r text-transparent from-blue-400 via-white-400 to-blue-200">
-                     Insurance
-                  </span>
-                </h1>
-              </div>
-              <p className="text-xl text-gray-200 leading-relaxed max-w-2xl text-left opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.5s_forwards]">
-                Keep your fleet moving forward with comprehensive protection for your business vehicles.
-              </p>
-              <div className="opacity-0 -translate-x-full animate-[slide-in-right_0.7s_0.7s_forwards]">
-                <Button
-                  onClick={() => router.push(ROUTES.INSURANCE.QUOTES.COMMERCIAL_AUTO)}
-                  variant="primary"
-                  size="lg"
-                  rightIcon={<ArrowRight className="w-5 h-5" />}
-                  className="transition-transform duration-200 hover:translate-x-1 text-lg px-8 py-6"
-                >
-                  Get Your Quote
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Details Section */}
-      <section className="py-24 bg-gradient-to-b from-gray-900 to-black">
+      {/* Details Section - Updated layout */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-gray-900 to-black pt-24 md:pt-32">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              <div className="aspect-square overflow-hidden">
+           {/* Added header for context previously provided by hero */}
+           <div className="text-center mb-12 md:mb-16">
+            <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">
+              Commercial Auto Insurance
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+               Keep your fleet moving forward with comprehensive protection for your business vehicles.
+            </p>
+          </div>
+          {/* Updated grid layout: stack on mobile, side-by-side on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
+            {/* Animation moved first visually on mobile */}
+            <div className="relative order-1 md:order-2">
+              <div className="aspect-square max-w-md mx-auto md:max-w-none">
                 <Lottie
                   animationData={animationData}
                   loop={true}
                   autoplay={true}
-                  className="object-cover group-hover:scale-105 transition-transform duration-500 w-full h-full"
+                  className="object-contain w-full h-full"
                 />
               </div>
               {/* Decorative elements */}
               <div className="absolute -inset-4 -z-10 bg-gradient-to-r from-blue-500/20 via-blue-600/20 to-blue-700/20 blur-2xl opacity-50" />
             </div>
-            <div>
+            {/* Text content moved second visually on mobile */}
+            <div className="order-2 md:order-1">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                 Why You Need Commercial Auto Insurance
               </h2>
