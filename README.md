@@ -1,106 +1,36 @@
-# WCCIS Website
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This repository contains the code for the WCCIS website (wccis.com).
+## Getting Started
 
-## Project Structure
-
-- **Frontend**: Next.js application in the `frontend/` directory
-- **Backend**: Node.js Express API in the `backend/` directory
-
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- npm
-
-### Setup Instructions
-
-#### Frontend
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. The frontend will be available at http://localhost:3000
-
-#### Backend
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. The API will be available at http://localhost:5000
-
-## Deployment
-
-For detailed deployment instructions, please refer to the [DEPLOYMENT.md](./DEPLOYMENT.md) file.
-
-### Quick Deployment Options
-
-#### Option 1: Docker Compose
-
-Deploy both frontend and backend using Docker Compose:
+First, run the development server:
 
 ```bash
-docker-compose up -d
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-#### Option 2: Manual Deployment
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. Build and deploy frontend:
-   ```bash
-   cd frontend
-   bash scripts/deploy.sh
-   ```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-2. Build and deploy backend:
-   ```bash
-   cd backend
-   bash scripts/deploy.sh
-   ```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Environment Variables
+## Learn More
 
-### Frontend
+To learn more about Next.js, take a look at the following resources:
 
-Set these in `.env.local` for development or `.env.production` for production:
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- `NEXT_PUBLIC_API_URL`: URL of the backend API
-- `NEXT_PUBLIC_SITE_URL`: URL of the frontend site
-- `NEXT_PUBLIC_GA_ID`: Google Analytics ID
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-### Backend
+## Deploy on Vercel
 
-Set these in `.env` for development or `.env.production` for production:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- `PORT`: Port number for the server
-- `NODE_ENV`: Environment (development or production)
-- `FRONTEND_URL`: URL of the frontend
-- Plus other variables for AWS S3, email, etc.
-
-## License
-
-Copyright © 2024 WCCIS. All rights reserved. 
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
