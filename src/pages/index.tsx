@@ -249,6 +249,46 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Combined Renewal Section - Inspired by Stripe's gradient call-to-action */}
+      <section className="py-16 md:py-24 relative overflow-hidden bg-gray-900">
+        {/* Static gradient background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-blue-500/20 to-blue-400/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-blue-300/10" />
+          <div className="absolute inset-0 bg-gray-900/90" />
+        </div>
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6">
+              Renew Your Policy
+            </h2>
+            <p className="text-gray-200 text-base md:text-lg mb-6 md:mb-8">
+              Quickly renew your General Liability or Workers Compensation policy using our streamlined forms.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 w-full sm:w-auto">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => router.push("/insurance/renewal")}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+                className="transition-transform duration-200 hover:translate-x-1 text-lg"
+              >
+                Renew General Liability
+              </Button>
+              <Button
+                variant="primary" // Using primary for both as they are key actions in this section
+                size="lg"
+                onClick={() => router.push("/insurance/workers-comp-renewal")}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+                className="transition-transform duration-200 hover:translate-x-1 text-lg"
+              >
+                Renew Workers Comp
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </Layout>
   );
 };
